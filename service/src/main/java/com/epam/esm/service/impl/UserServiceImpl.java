@@ -1,7 +1,8 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.constant.error.ErrorCode;
 import com.epam.esm.dao.UserDao;
-import com.epam.esm.constant.ErrorAttribute;
+import com.epam.esm.constant.error.ErrorName;
 import com.epam.esm.dto.User;
 import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ResourceNotFoundException;
@@ -11,18 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * The type User service.
- */
 @Service
 public class UserServiceImpl implements UserService<User> {
     private final UserDao<User> dao;
 
-    /**
-     * Instantiates a new User service.
-     *
-     * @param dao the dao
-     */
     @Autowired
     public UserServiceImpl(UserDao<User> dao) {
         this.dao = dao;
@@ -32,9 +25,9 @@ public class UserServiceImpl implements UserService<User> {
     public User findById(String id) {
         try {
             return dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException(
-                    ErrorAttribute.USER_ERROR_CODE, ErrorAttribute.RESOURCE_NOT_FOUND_ERROR, id));
+                    ErrorCode.USER, ErrorName.RESOURCE_NOT_FOUND, id));
         } catch (NumberFormatException e) {
-            throw new InvalidFieldException(ErrorAttribute.USER_ERROR_CODE, ErrorAttribute.INVALID_USER_ID_ERROR, id);
+            throw new InvalidFieldException(ErrorCode.USER, ErrorName.INVALID_USER_ID, id);
         }
     }
 

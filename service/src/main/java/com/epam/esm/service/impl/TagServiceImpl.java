@@ -1,7 +1,8 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.constant.error.ErrorCode;
+import com.epam.esm.constant.error.ErrorName;
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.constant.ErrorAttribute;
 import com.epam.esm.dto.Tag;
 import com.epam.esm.dto.User;
 import com.epam.esm.exception.InvalidFieldException;
@@ -17,20 +18,11 @@ import java.util.List;
 
 import static com.epam.esm.validator.TagValidator.isNameValid;
 
-/**
- * The type Tag service.
- */
 @Service
 public class TagServiceImpl implements TagService<Tag> {
     private final TagDao<Tag> dao;
     private final UserService<User> userService;
 
-    /**
-     * Instantiates a new Tag service.
-     *
-     * @param dao         the dao
-     * @param userService the user service
-     */
     @Autowired
     public TagServiceImpl(TagDao<Tag> dao, UserService<User> userService) {
         this.dao = dao;
@@ -40,12 +32,10 @@ public class TagServiceImpl implements TagService<Tag> {
     @Override
     public long insert(Tag tag) {
         if (!isNameValid(tag.getName())) {
-            throw new InvalidFieldException(ErrorAttribute.TAG_ERROR_CODE, ErrorAttribute.INVALID_TAG_ID_ERROR,
-                    tag.getName());
+            throw new InvalidFieldException(ErrorCode.TAG, ErrorName.INVALID_TAG_ID, tag.getName());
         }
         if (dao.findByName(tag.getName()).isPresent()) {
-            throw new ResourceDuplicateException(ErrorAttribute.TAG_ERROR_CODE, ErrorAttribute.TAG_DUPLICATE_ERROR,
-                    tag.getName());
+            throw new ResourceDuplicateException(ErrorCode.TAG, ErrorName.TAG_DUPLICATE, tag.getName());
         }
         return dao.insert(tag);
     }
@@ -53,28 +43,27 @@ public class TagServiceImpl implements TagService<Tag> {
     @Override
     public Tag findById(String id) {
         try {
-            return dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException(
-                    ErrorAttribute.TAG_ERROR_CODE, ErrorAttribute.RESOURCE_NOT_FOUND_ERROR, id));
+            return dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException(ErrorCode.TAG,
+                    ErrorName.RESOURCE_NOT_FOUND, id));
         } catch (NumberFormatException e) {
-            throw new InvalidFieldException(ErrorAttribute.TAG_ERROR_CODE, ErrorAttribute.INVALID_TAG_ID_ERROR, id);
+            throw new InvalidFieldException(ErrorCode.TAG, ErrorName.INVALID_TAG_ID, id);
         }
     }
 
     @Override
     public Tag findByName(String name) {
         if (TagValidator.isNameValid(name)) {
-            return dao.findByName(name).orElseThrow(() -> new ResourceNotFoundException(ErrorAttribute.TAG_ERROR_CODE,
-                    ErrorAttribute.RESOURCE_NOT_FOUND_ERROR, name));
+            return dao.findByName(name).orElseThrow(() -> new ResourceNotFoundException(ErrorCode.TAG,
+                    ErrorName.RESOURCE_NOT_FOUND, name));
         } else {
-            throw new InvalidFieldException(ErrorAttribute.TAG_ERROR_CODE, ErrorAttribute.INVALID_TAG_NAME, name);
+            throw new InvalidFieldException(ErrorCode.TAG, ErrorName.INVALID_TAG_NAME, name);
         }
     }
 
     @Override
     public Tag findMostUsedTagOfUserWithHighestCostOfAllOrders(String userId) {
         return dao.findMostUsedTagOfUserWithHighestCostOfAllOrders(userService.findById(userId).getId()).orElseThrow(
-                () -> new ResourceNotFoundException(ErrorAttribute.TAG_ERROR_CODE,
-                        ErrorAttribute.RESOURCE_NOT_FOUND_ERROR, userId));
+                () -> new ResourceNotFoundException(ErrorCode.TAG, ErrorName.RESOURCE_NOT_FOUND, userId));
     }
 
     @Override
@@ -86,12 +75,11 @@ public class TagServiceImpl implements TagService<Tag> {
     public boolean delete(String id) {
         try {
             if (!dao.delete(Long.parseLong(id))) {
-                throw new ResourceNotFoundException(ErrorAttribute.TAG_ERROR_CODE,
-                        ErrorAttribute.RESOURCE_NOT_FOUND_ERROR, id);
+                throw new ResourceNotFoundException(ErrorCode.TAG, ErrorName.RESOURCE_NOT_FOUND, id);
             }
             return true;
         } catch (NumberFormatException e) {
-            throw new InvalidFieldException(ErrorAttribute.TAG_ERROR_CODE, ErrorAttribute.INVALID_TAG_ID_ERROR, id);
+            throw new InvalidFieldException(ErrorCode.TAG, ErrorName.INVALID_TAG_ID, id);
         }
     }
 }

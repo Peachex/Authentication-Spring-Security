@@ -1,7 +1,8 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.constant.error.ErrorCode;
+import com.epam.esm.constant.error.ErrorName;
 import com.epam.esm.dao.OrderDao;
-import com.epam.esm.constant.ErrorAttribute;
 import com.epam.esm.constant.Symbol;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Order;
@@ -19,22 +20,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * The type Order service.
- */
 @Service
 public class OrderServiceImpl implements OrderService<Order> {
     private final OrderDao<Order> dao;
     private final UserService<User> userService;
     private final GiftCertificateService<GiftCertificate> certificateService;
 
-    /**
-     * Instantiates a new Order service.
-     *
-     * @param dao                the dao
-     * @param userService        the user service
-     * @param certificateService the certificate service
-     */
     @Autowired
     public OrderServiceImpl(OrderDao<Order> dao, UserService<User> userService,
                             GiftCertificateService<GiftCertificate> certificateService) {
@@ -57,25 +48,25 @@ public class OrderServiceImpl implements OrderService<Order> {
             order.setUser(user);
             return dao.insert(order);
         } catch (NumberFormatException e) {
-            throw new InvalidFieldException(ErrorAttribute.USER_ERROR_CODE, ErrorAttribute.INVALID_ID, userId +
-                    Symbol.COMMA + Symbol.SPACE + certificateId);
+            throw new InvalidFieldException(ErrorCode.ORDER, ErrorName.INVALID_ID, userId + Symbol.COMMA +
+                    Symbol.SPACE + certificateId);
         }
     }
 
     @Override
     public Order findByUserIdAndOrderId(String userId, String orderId) {
         return dao.findByUserIdAndOrderId(userService.findById(userId).getId(), findById(orderId).getId()).orElseThrow(
-                () -> new ResourceNotFoundException(ErrorAttribute.USER_ERROR_CODE,
-                        ErrorAttribute.RESOURCE_NOT_FOUND_ERROR, userId + Symbol.COMMA + Symbol.SPACE + orderId));
+                () -> new ResourceNotFoundException(ErrorCode.ORDER, ErrorName.RESOURCE_NOT_FOUND, userId +
+                        Symbol.COMMA + Symbol.SPACE + orderId));
     }
 
     @Override
     public Order findById(String id) {
         try {
-            return dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException(
-                    ErrorAttribute.ORDER_ERROR_CODE, ErrorAttribute.RESOURCE_NOT_FOUND_ERROR, id));
+            return dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException(ErrorCode.ORDER,
+                    ErrorName.RESOURCE_NOT_FOUND, id));
         } catch (NumberFormatException e) {
-            throw new InvalidFieldException(ErrorAttribute.ORDER_ERROR_CODE, ErrorAttribute.INVALID_ORDER_ID, id);
+            throw new InvalidFieldException(ErrorCode.ORDER, ErrorName.INVALID_ORDER_ID, id);
         }
     }
 
@@ -86,8 +77,7 @@ public class OrderServiceImpl implements OrderService<Order> {
                 CollectionUtils.isEmpty(dao.findByCertificateId(certificate.getId()))) {
             return dao.deleteByCertificateId(certificate.getId());
         }
-        throw new DeleteCertificateInUseException(ErrorAttribute.ORDER_ERROR_CODE,
-                ErrorAttribute.CERTIFICATE_IN_USE_ERROR, certificateId);
+        throw new DeleteCertificateInUseException(ErrorCode.ORDER, ErrorName.CERTIFICATE_IN_USE, certificateId);
     }
 
     private Order createOrder(GiftCertificate certificate) {

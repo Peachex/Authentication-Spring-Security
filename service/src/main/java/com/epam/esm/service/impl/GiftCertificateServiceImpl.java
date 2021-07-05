@@ -1,8 +1,9 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.constant.entity.GiftCertificateFieldName;
+import com.epam.esm.constant.error.ErrorCode;
+import com.epam.esm.constant.error.ErrorName;
 import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.constant.ErrorAttribute;
 import com.epam.esm.dao.creator.criteria.Criteria;
 import com.epam.esm.dao.creator.criteria.search.FullMatchSearchCertificateCriteria;
 import com.epam.esm.dao.creator.criteria.search.PartMatchSearchCertificateCriteria;
@@ -64,8 +65,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                 id = dao.insert(giftCertificate);
             }
         } else {
-            throw new InvalidFieldException(ErrorAttribute.GIFT_CERTIFICATE_ERROR_CODE,
-                    ErrorAttribute.INVALID_GIFT_CERTIFICATE_ERROR, giftCertificate.toString());
+            throw new InvalidFieldException(ErrorCode.GIFT_CERTIFICATE, ErrorName.INVALID_GIFT_CERTIFICATE,
+                    giftCertificate.toString());
         }
         return id;
     }
@@ -74,15 +75,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     public boolean delete(String id) {
         try {
             GiftCertificate giftCertificate = dao.findById(Long.parseLong(id)).orElseThrow(() ->
-                    new ResourceNotFoundException(ErrorAttribute.GIFT_CERTIFICATE_ERROR_CODE,
-                            ErrorAttribute.RESOURCE_NOT_FOUND_ERROR, id));
+                    new ResourceNotFoundException(ErrorCode.GIFT_CERTIFICATE, ErrorName.RESOURCE_NOT_FOUND, id));
             if (!CollectionUtils.isEmpty(giftCertificate.getTags())) {
                 dao.disconnectAllTags(giftCertificate);
             }
             return dao.delete(giftCertificate.getId());
         } catch (NumberFormatException e) {
-            throw new InvalidFieldException(ErrorAttribute.GIFT_CERTIFICATE_ERROR_CODE,
-                    ErrorAttribute.INVALID_GIFT_CERTIFICATE_ID_ERROR, id);
+            throw new InvalidFieldException(ErrorCode.GIFT_CERTIFICATE, ErrorName.INVALID_GIFT_CERTIFICATE_ID, id);
         }
     }
 
@@ -90,8 +89,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     public boolean update(String id, GiftCertificate newCertificate) {
         try {
             GiftCertificate oldCertificate = dao.findById(Long.parseLong(id)).orElseThrow(() ->
-                    new ResourceNotFoundException(ErrorAttribute.GIFT_CERTIFICATE_ERROR_CODE,
-                            ErrorAttribute.RESOURCE_NOT_FOUND_ERROR, id));
+                    new ResourceNotFoundException(ErrorCode.GIFT_CERTIFICATE,
+                            ErrorName.RESOURCE_NOT_FOUND, id));
 
             if (updateCertificateFields(oldCertificate, newCertificate)) {
                 oldCertificate.setLastUpdateDate(LocalDateTime.now());
@@ -102,12 +101,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                 }
                 dao.update(oldCertificate);
             } else {
-                throw new InvalidFieldException(ErrorAttribute.GIFT_CERTIFICATE_ERROR_CODE,
-                        ErrorAttribute.INVALID_GIFT_CERTIFICATE_ERROR, newCertificate.toString());
+                throw new InvalidFieldException(ErrorCode.GIFT_CERTIFICATE, ErrorName.INVALID_GIFT_CERTIFICATE,
+                        newCertificate.toString());
             }
         } catch (NumberFormatException e) {
-            throw new InvalidFieldException(ErrorAttribute.GIFT_CERTIFICATE_ERROR_CODE,
-                    ErrorAttribute.INVALID_GIFT_CERTIFICATE_ID_ERROR, id);
+            throw new InvalidFieldException(ErrorCode.GIFT_CERTIFICATE, ErrorName.INVALID_GIFT_CERTIFICATE_ID, id);
         }
         return true;
     }
@@ -131,10 +129,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     public GiftCertificate findById(String id) {
         try {
             return dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException(
-                    ErrorAttribute.GIFT_CERTIFICATE_ERROR_CODE, ErrorAttribute.RESOURCE_NOT_FOUND_ERROR, id));
+                    ErrorCode.GIFT_CERTIFICATE, ErrorName.RESOURCE_NOT_FOUND, id));
         } catch (NumberFormatException e) {
-            throw new InvalidFieldException(ErrorAttribute.GIFT_CERTIFICATE_ERROR_CODE,
-                    ErrorAttribute.INVALID_GIFT_CERTIFICATE_ID_ERROR, id);
+            throw new InvalidFieldException(ErrorCode.GIFT_CERTIFICATE,
+                    ErrorName.INVALID_GIFT_CERTIFICATE_ID, id);
         }
     }
 
