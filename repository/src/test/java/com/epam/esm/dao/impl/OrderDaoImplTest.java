@@ -23,9 +23,6 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * The type Order dao impl test.
- */
 @DirtiesContext
 @ContextConfiguration(classes = {OrderDaoImpl.class, GiftCertificateQueryCreator.class,
         EntityManagerFactoryConfiguration.class}, loader = AnnotationConfigContextLoader.class)
@@ -35,9 +32,6 @@ public class OrderDaoImplTest {
     @Autowired
     private OrderDao<Order> dao;
 
-    /**
-     * Insert test.
-     */
     @Test
     public void insertTest() {
         Order order = new Order();
@@ -56,9 +50,6 @@ public class OrderDaoImplTest {
         assertEquals(expected, actual);
     }
 
-    /**
-     * Find by id test.
-     */
     @Test
     public void findByIdTest() {
         Optional<Order> expected = Optional.empty();
@@ -66,9 +57,6 @@ public class OrderDaoImplTest {
         assertEquals(expected, actual);
     }
 
-    /**
-     * Delete by certificate id test.
-     */
     @Test
     public void deleteByCertificateIdTest() {
         boolean actual = dao.deleteByCertificateId(1);

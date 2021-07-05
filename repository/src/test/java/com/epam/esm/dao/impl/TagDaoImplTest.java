@@ -15,9 +15,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * The type Tag dao impl test.
- */
 @DirtiesContext
 @ContextConfiguration(classes = {TagDaoImpl.class, EntityManagerFactoryConfiguration.class},
         loader = AnnotationConfigContextLoader.class)
@@ -27,9 +24,6 @@ public class TagDaoImplTest {
     @Autowired
     private TagDao<Tag> dao;
 
-    /**
-     * Find by name test.
-     */
     @Test
     public void findByNameTest() {
         Optional<Tag> expected = Optional.of(new Tag("#funny"));
@@ -37,9 +31,6 @@ public class TagDaoImplTest {
         assertEquals(expected, actual);
     }
 
-    /**
-     * Find by id test.
-     */
     @Test
     public void findByIdTest() {
         Optional<Tag> expected = Optional.empty();
@@ -47,9 +38,6 @@ public class TagDaoImplTest {
         assertEquals(expected, actual);
     }
 
-    /**
-     * Insert test.
-     */
     @Test
     public void insertTest() {
         long expected = 6;
@@ -57,9 +45,6 @@ public class TagDaoImplTest {
         assertEquals(expected, actual);
     }
 
-    /**
-     * Delete test.
-     */
     @Test
     public void deleteTest() {
         boolean actual = dao.delete(6);
