@@ -1,6 +1,7 @@
 package com.epam.esm.response;
 
-import com.epam.esm.attribute.ResponseAttribute;
+import com.epam.esm.constant.ResponseMessageName;
+import com.epam.esm.constant.PropertyFileName;
 import com.epam.esm.util.MessageLocale;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.hateoas.RepresentationModel;
@@ -10,12 +11,13 @@ import java.util.ResourceBundle;
 public class OperationResponse extends RepresentationModel<OperationResponse> {
     private String operation;
     private String message;
+    private long objectId;
 
     public enum Operation {
-        CREATION(ResponseAttribute.CREATION_OPERATION),
-        DELETION(ResponseAttribute.DELETION_OPERATION),
-        UPDATE(ResponseAttribute.UPDATE_OPERATION),
-        OTHER(ResponseAttribute.OTHER_OPERATION);
+        CREATION(ResponseMessageName.CREATION_OPERATION),
+        DELETION(ResponseMessageName.DELETION_OPERATION),
+        UPDATE(ResponseMessageName.UPDATE_OPERATION),
+        OTHER(ResponseMessageName.OTHER_OPERATION);
 
         private final String nameKey;
 
@@ -24,7 +26,7 @@ public class OperationResponse extends RepresentationModel<OperationResponse> {
         }
 
         public String getLocalizedOperationName() {
-            return ResourceBundle.getBundle(ResponseAttribute.PROPERTY_FILE_NAME,
+            return ResourceBundle.getBundle(PropertyFileName.OPERATION_RESPONSE_MESSAGES,
                     MessageLocale.getCurrent()).getString(nameKey);
         }
     }
@@ -32,10 +34,17 @@ public class OperationResponse extends RepresentationModel<OperationResponse> {
     public OperationResponse() {
     }
 
-    public OperationResponse(Operation operation, String messageKey, String detail) {
+    public OperationResponse(Operation operation, String messageKey) {
         this.operation = operation.getLocalizedOperationName();
-        this.message = ResourceBundle.getBundle(ResponseAttribute.PROPERTY_FILE_NAME,
-                MessageLocale.getCurrent()).getString(messageKey) + StringUtils.SPACE + detail;
+        this.message = ResourceBundle.getBundle(PropertyFileName.OPERATION_RESPONSE_MESSAGES,
+                MessageLocale.getCurrent()).getString(messageKey);
+    }
+
+    public OperationResponse(Operation operation, String messageKey, long objectId) {
+        this.operation = operation.getLocalizedOperationName();
+        this.objectId = objectId;
+        this.message = ResourceBundle.getBundle(PropertyFileName.OPERATION_RESPONSE_MESSAGES,
+                MessageLocale.getCurrent()).getString(messageKey) + StringUtils.SPACE + objectId;
     }
 
     public String getMessage() {
@@ -52,5 +61,9 @@ public class OperationResponse extends RepresentationModel<OperationResponse> {
 
     public void setOperation(String operation) {
         this.operation = operation;
+    }
+
+    public long getObjectId() {
+        return objectId;
     }
 }

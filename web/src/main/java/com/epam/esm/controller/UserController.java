@@ -1,6 +1,6 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.attribute.ResponseAttribute;
+import com.epam.esm.constant.ResponseMessageName;
 import com.epam.esm.dto.Order;
 import com.epam.esm.dto.Tag;
 import com.epam.esm.dto.User;
@@ -20,9 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * The type User controller.
- */
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -34,17 +31,6 @@ public class UserController {
     private final Hateoas<Tag> tagHateoas;
     private final Hateoas<OperationResponse> responseHateoas;
 
-    /**
-     * Instantiates a new User controller.
-     *
-     * @param userService     the user service
-     * @param orderService    the order service
-     * @param tagService      the tag service
-     * @param userHateoas     the user hateoas
-     * @param orderHateoas    the order hateoas
-     * @param tagHateoas      the tag hateoas
-     * @param responseHateoas the response hateoas
-     */
     @Autowired
     public UserController(UserService<User> userService, OrderService<Order> orderService, TagService<Tag> tagService,
                           Hateoas<User> userHateoas, Hateoas<Order> orderHateoas, Hateoas<Tag> tagHateoas,
@@ -58,12 +44,6 @@ public class UserController {
         this.responseHateoas = responseHateoas;
     }
 
-    /**
-     * Find user by id user.
-     *
-     * @param id the id
-     * @return the user
-     */
     @GetMapping("/{id}")
     public User findUserById(@PathVariable String id) {
         User user = userService.findById(id);
@@ -71,13 +51,6 @@ public class UserController {
         return user;
     }
 
-    /**
-     * Find all users list.
-     *
-     * @param page     the page
-     * @param elements the elements
-     * @return the list
-     */
     @GetMapping
     public List<User> findAllUsers(@RequestParam int page, @RequestParam int elements) {
         List<User> users = userService.findAll(page, elements);
@@ -85,30 +58,14 @@ public class UserController {
         return users;
     }
 
-    /**
-     * Create order operation response.
-     *
-     * @param userId        the user id
-     * @param certificateId the certificate id
-     * @return the operation response
-     */
     @PatchMapping("/{userId}/orders/new/{certificateId}")
     public OperationResponse createOrder(@PathVariable String userId, @PathVariable String certificateId) {
         OperationResponse response = new OperationResponse(OperationResponse.Operation.CREATION,
-                ResponseAttribute.ORDER_CREATE_OPERATION, String.valueOf(orderService.createOrder(userId,
-                certificateId)));
+                ResponseMessageName.ORDER_CREATE_OPERATION, orderService.createOrder(userId, certificateId));
         responseHateoas.createHateoas(response);
         return response;
     }
 
-    /**
-     * Find user orders list.
-     *
-     * @param userId   the user id
-     * @param page     the page
-     * @param elements the elements
-     * @return the list
-     */
     @GetMapping("/{userId}/orders")
     public List<Order> findUserOrders(@PathVariable String userId, @RequestParam int page, @RequestParam int elements) {
         List<Order> orders = orderService.findByUserId(page, elements, userId);
@@ -116,13 +73,6 @@ public class UserController {
         return orders;
     }
 
-    /**
-     * Find user order order.
-     *
-     * @param userId  the user id
-     * @param orderId the order id
-     * @return the order
-     */
     @GetMapping("/{userId}/orders/{orderId}")
     public Order findUserOrder(@PathVariable String userId, @PathVariable String orderId) {
         Order order = orderService.findByUserIdAndOrderId(userId, orderId);
@@ -130,12 +80,6 @@ public class UserController {
         return order;
     }
 
-    /**
-     * Find most used tag of user with highest cost of all orders tag.
-     *
-     * @param userId the user id
-     * @return the tag
-     */
     @GetMapping("/{userId}/orders/tags/popular")
     public Tag findMostUsedTagOfUserWithHighestCostOfAllOrders(@PathVariable String userId) {
         Tag tag = tagService.findMostUsedTagOfUserWithHighestCostOfAllOrders(userId);
