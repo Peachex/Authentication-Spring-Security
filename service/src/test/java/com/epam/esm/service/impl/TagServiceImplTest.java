@@ -8,13 +8,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.anyString;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TagServiceImplTest {
@@ -29,24 +31,24 @@ public class TagServiceImplTest {
 
     @BeforeAll
     public void init() {
-        MockitoAnnotations.initMocks(this);
-        service = new TagServiceImpl(dao,null, validator);
+        initMocks(this);
+        service = new TagServiceImpl(dao, null, validator);
     }
 
     @Test
     public void insertTest() {
         long expected = 11;
         Tag tag = new Tag("#new");
-        Mockito.when(validator.isNameValid(Mockito.anyString())).thenReturn(true);
-        Mockito.when(dao.insert(tag)).thenReturn(11L);
-        Mockito.when(dao.findByName(Mockito.anyString())).thenReturn(Optional.empty());
+        when(validator.isNameValid(anyString())).thenReturn(true);
+        when(dao.insert(tag)).thenReturn(11L);
+        when(dao.findByName(anyString())).thenReturn(Optional.empty());
         long actual = service.insert(tag);
         assertEquals(expected, actual);
     }
 
     @Test
     public void deleteTest() {
-        Mockito.when(dao.delete(Mockito.anyLong())).thenReturn(true);
+        when(dao.delete(anyLong())).thenReturn(true);
         boolean actual = service.delete("11");
         assertTrue(actual);
     }
@@ -54,7 +56,7 @@ public class TagServiceImplTest {
     @Test
     public void findByIdTest() {
         Tag expected = new Tag("#cool");
-        Mockito.when(dao.findById(Mockito.anyLong())).thenReturn(Optional.of(expected));
+        when(dao.findById(anyLong())).thenReturn(Optional.of(expected));
         Tag actual = service.findById("11");
         assertEquals(expected, actual);
     }

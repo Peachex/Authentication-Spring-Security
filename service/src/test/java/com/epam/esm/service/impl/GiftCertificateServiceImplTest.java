@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,6 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
@@ -39,7 +39,7 @@ public class GiftCertificateServiceImplTest {
 
     @BeforeAll
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        initMocks(this);
         service = new GiftCertificateServiceImpl(dao, null, certificateValidator, null);
         giftCertificate = new GiftCertificate(2, "Sand", "Yellow sand", new BigDecimal("2"), 24,
                 LocalDateTime.of(2020, 5, 5, 23, 42, 12, 112000000),

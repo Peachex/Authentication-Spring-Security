@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,15 +23,14 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.anyString;
 
-/**
- * The type Order service impl test.
- */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OrderServiceImplTest {
-    /**
-     * The Order service.
-     */
     @InjectMocks
     public OrderServiceImpl orderService;
 
@@ -46,27 +43,20 @@ public class OrderServiceImplTest {
     @Mock
     private GiftCertificateService<GiftCertificate> certificateService;
 
-    /**
-     * Init.
-     */
     @BeforeAll
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        initMocks(this);
     }
 
-    /**
-     * Create order test.
-     */
     @Test
     public void createOrderTest() {
         long expected = 11;
-        Mockito.when(dao.insert(Mockito.any()))
-                .thenReturn(expected);
+        when(dao.insert(any())).thenReturn(expected);
 
-        Mockito.when(userService.findById(Mockito.anyString()))
+        when(userService.findById(anyString()))
                 .thenReturn(new User(1, "Alice", "Green", "alice@gmail.com"));
 
-        Mockito.when(certificateService.findById(Mockito.anyString()))
+        when(certificateService.findById(anyString()))
                 .thenReturn(new GiftCertificate(2, "Sand", "Yellow sand", new BigDecimal("2"),
                         24, LocalDateTime.of(2020, 5, 5, 23, 42, 12,
                         112000000), null, new HashSet<>()));
@@ -75,9 +65,6 @@ public class OrderServiceImplTest {
         assertEquals(expected, actual);
     }
 
-    /**
-     * Find by id test.
-     */
     @Test
     public void findByIdTest() {
         Order expected = new Order();
@@ -91,16 +78,11 @@ public class OrderServiceImplTest {
         expected.setGiftCertificate(new GiftCertificate(5, "Ferry", "Ferryman", BigDecimal.valueOf(0.99), 14,
                 LocalDateTime.of(2019, 11, 19, 11, 10, 11, 111000000), null, tags));
 
-        Mockito.when(dao.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(expected));
-
+        when(dao.findById(anyLong())).thenReturn(Optional.of(expected));
         Order actual = orderService.findById("11");
         assertEquals(expected, actual);
     }
 
-    /**
-     * Delete by certificate id test.
-     */
     @Test
     public void deleteByCertificateIdTest() {
         Order order = new Order();
@@ -116,12 +98,8 @@ public class OrderServiceImplTest {
                 10, 11, 111000000), null, tags);
         order.setGiftCertificate(certificate);
 
-        Mockito.when(certificateService.findById(Mockito.anyString()))
-                .thenReturn(certificate);
-
-        Mockito.when(dao.findByCertificateId(Mockito.anyLong()))
-                .thenReturn(Collections.singletonList(order));
-
+        when(certificateService.findById(anyString())).thenReturn(certificate);
+        when(dao.findByCertificateId(anyLong())).thenReturn(Collections.singletonList(order));
         assertThrows(DeleteCertificateInUseException.class, () -> orderService.deleteByCertificateId("1"));
     }
 }
