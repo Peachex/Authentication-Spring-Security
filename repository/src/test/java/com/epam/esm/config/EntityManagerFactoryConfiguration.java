@@ -10,20 +10,12 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.sql.DataSource;
 
-/**
- * The type Entity manager factory configuration.
- */
 @TestConfiguration
 public class EntityManagerFactoryConfiguration {
     private static final String CREATE_DATABASE_SCRIPT = "classpath:script/schema.sql";
     private static final String FILL_DATABASE_WITH_DATA_SCRIPT = "classpath:script/data.sql";
-    private static final String PACKAGE_TO_SCAN = "com.epam.esm";
+    private static final String PACKAGE_TO_SCAN = "com.epam.esm"; //todo create ONE constant
 
-    /**
-     * Entity manager factory local container entity manager factory bean.
-     *
-     * @return the local container entity manager factory bean
-     */
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
@@ -34,11 +26,6 @@ public class EntityManagerFactoryConfiguration {
         return em;
     }
 
-    /**
-     * Embedded data source data source.
-     *
-     * @return the data source
-     */
     @Bean
     public DataSource embeddedDataSource() {
         return new EmbeddedDatabaseBuilder()

@@ -1,20 +1,20 @@
 package com.epam.esm.config;
 
+import com.epam.esm.dao.constant.ProfileName;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 
-/**
- * The type Data source configuration.
- */
 @Configuration
+@PropertySource("classpath:properties/database.properties")
 public class DataSourceConfiguration {
     private static final String DATABASE_DRIVER_CLASS_NAME = "spring.datasource.driver-class-name";
     private static final String DATABASE_URL = "spring.datasource.url";
@@ -26,22 +26,13 @@ public class DataSourceConfiguration {
 
     private Environment environment;
 
-    /**
-     * Sets environment.
-     *
-     * @param environment the environment
-     */
     @Autowired
     public void setEnvironment(Environment environment) {
         this.environment = environment;
     }
 
-    /**
-     * Data source data source.
-     *
-     * @return the data source
-     */
-    @Profile("prod")
+
+    @Profile(ProfileName.PRODUCTION)
     @Bean
     public DataSource dataSource() {
         HikariDataSource dataSource = new HikariDataSource();
@@ -53,12 +44,7 @@ public class DataSourceConfiguration {
         return dataSource;
     }
 
-    /**
-     * Embedded data source data source.
-     *
-     * @return the data source
-     */
-    @Profile("dev")
+    @Profile(ProfileName.DEVELOPMENT)
     @Bean
     public DataSource embeddedDataSource() {
         return new EmbeddedDatabaseBuilder()
