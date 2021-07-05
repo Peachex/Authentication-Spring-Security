@@ -1,7 +1,10 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.constant.entity.GiftCertificateFieldName;
+import com.epam.esm.constant.entity.OrderFieldName;
+import com.epam.esm.constant.entity.TagFieldName;
+import com.epam.esm.constant.entity.UserFieldName;
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.dao.constant.EntityFieldsName;
 import com.epam.esm.dto.Order;
 import com.epam.esm.dto.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +20,10 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * The type Tag dao.
- */
 @Repository
 public class TagDaoImpl implements TagDao<Tag> {
     private final EntityManagerFactory factory;
 
-    /**
-     * Instantiates a new Tag dao.
-     *
-     * @param factory the factory
-     */
     @Autowired
     public TagDaoImpl(EntityManagerFactory factory) {
         this.factory = factory;
@@ -58,7 +53,7 @@ public class TagDaoImpl implements TagDao<Tag> {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
         Root<Tag> root = criteria.from(Tag.class);
-        criteria.where(builder.equal(root.get(EntityFieldsName.NAME), name));
+        criteria.where(builder.equal(root.get(TagFieldName.NAME), name));
         Optional<Tag> tag = em.createQuery(criteria).getResultStream().findAny();
         em.close();
         return tag;
@@ -71,14 +66,14 @@ public class TagDaoImpl implements TagDao<Tag> {
         CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
         Root<Order> root = criteria.from(Order.class);
 
-        Join<Tag, Order> tagOrderJoin = root.join(EntityFieldsName.GIFT_CERTIFICATE)
-                .join(EntityFieldsName.TAGS);
+        Join<Tag, Order> tagOrderJoin = root.join(OrderFieldName.GIFT_CERTIFICATE)
+                .join(GiftCertificateFieldName.TAGS);
 
-        criteria.select(root.get(EntityFieldsName.GIFT_CERTIFICATE).get(EntityFieldsName.TAGS))
-                .where(builder.equal(root.get(EntityFieldsName.USER).get(EntityFieldsName.ID), userId))
-                .groupBy(tagOrderJoin.get(EntityFieldsName.NAME))
-                .orderBy(builder.desc(builder.count(tagOrderJoin.get(EntityFieldsName.NAME))),
-                        builder.desc(builder.sum(root.get(EntityFieldsName.PRICE))));
+        criteria.select(root.get(OrderFieldName.GIFT_CERTIFICATE).get(GiftCertificateFieldName.TAGS))
+                .where(builder.equal(root.get(OrderFieldName.USER).get(UserFieldName.ID), userId))
+                .groupBy(tagOrderJoin.get(TagFieldName.NAME))
+                .orderBy(builder.desc(builder.count(tagOrderJoin.get(TagFieldName.NAME))),
+                        builder.desc(builder.sum(root.get(OrderFieldName.PRICE))));
 
         Optional<Tag> tag = em.createQuery(criteria).getResultStream().findFirst();
         em.close();
@@ -104,7 +99,7 @@ public class TagDaoImpl implements TagDao<Tag> {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaDelete<Tag> criteria = builder.createCriteriaDelete(Tag.class);
         Root<Tag> root = criteria.from(Tag.class);
-        criteria.where(builder.equal(root.get(EntityFieldsName.ID), id));
+        criteria.where(builder.equal(root.get(TagFieldName.ID), id));
         em.getTransaction().begin();
         boolean result = em.createQuery(criteria).executeUpdate() == 1;
         em.getTransaction().commit();

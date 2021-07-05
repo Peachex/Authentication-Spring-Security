@@ -1,7 +1,7 @@
 package com.epam.esm.response;
 
 import com.epam.esm.attribute.ResponseAttribute;
-import com.epam.esm.dao.constant.Symbol;
+import com.epam.esm.constant.Symbol;
 import com.epam.esm.util.MessageLocale;
 import org.springframework.hateoas.RepresentationModel;
 

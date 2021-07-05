@@ -1,4 +1,4 @@
-package com.epam.esm.dao.constant;
+package com.epam.esm.constant;
 
 /**
  * The type Error attribute.

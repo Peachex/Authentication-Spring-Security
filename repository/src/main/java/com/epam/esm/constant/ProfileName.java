@@ -1,4 +1,4 @@
-package com.epam.esm.dao.constant;
+package com.epam.esm.constant;
 
 public class ProfileName {
     public static final String PRODUCTION = "prod";

@@ -1,6 +1,6 @@
 package com.epam.esm.handler;
 
-import com.epam.esm.dao.constant.Symbol;
+import com.epam.esm.constant.Symbol;
 import com.epam.esm.response.ExceptionResponse;
 import com.epam.esm.exception.ResourceDuplicateException;
 import com.epam.esm.util.MessageLocale;

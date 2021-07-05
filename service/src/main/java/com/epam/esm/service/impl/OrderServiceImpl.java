@@ -1,8 +1,8 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.OrderDao;
-import com.epam.esm.dao.constant.ErrorAttribute;
-import com.epam.esm.dao.constant.Symbol;
+import com.epam.esm.constant.ErrorAttribute;
+import com.epam.esm.constant.Symbol;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Order;
 import com.epam.esm.dto.User;

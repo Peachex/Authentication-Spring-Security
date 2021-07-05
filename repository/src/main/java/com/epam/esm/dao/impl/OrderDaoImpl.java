@@ -1,7 +1,9 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.constant.entity.GiftCertificateFieldName;
+import com.epam.esm.constant.entity.OrderFieldName;
+import com.epam.esm.constant.entity.UserFieldName;
 import com.epam.esm.dao.OrderDao;
-import com.epam.esm.dao.constant.EntityFieldsName;
 import com.epam.esm.dto.Order;
 import com.epam.esm.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +19,10 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * The type Order dao.
- */
 @Repository
 public class OrderDaoImpl implements OrderDao<Order> {
     private final EntityManagerFactory factory;
 
-    /**
-     * Instantiates a new Order dao.
-     *
-     * @param factory the factory
-     */
     @Autowired
     public OrderDaoImpl(EntityManagerFactory factory) {
         this.factory = factory;
@@ -50,7 +44,7 @@ public class OrderDaoImpl implements OrderDao<Order> {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
         Root<Order> root = criteria.from(Order.class);
-        criteria.where(builder.equal(root.get(EntityFieldsName.USER), user));
+        criteria.where(builder.equal(root.get(OrderFieldName.USER), user));
         List<Order> orders = (page > 0 && elements > 0) ? em.createQuery(criteria).setMaxResults(elements)
                 .setFirstResult(elements * (page - 1)).getResultList() : em.createQuery(criteria).getResultList();
         em.close();
@@ -63,7 +57,7 @@ public class OrderDaoImpl implements OrderDao<Order> {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaDelete<Order> criteria = builder.createCriteriaDelete(Order.class);
         Root<Order> root = criteria.from(Order.class);
-        criteria.where(builder.equal(root.get(EntityFieldsName.GIFT_CERTIFICATE).get(EntityFieldsName.ID),
+        criteria.where(builder.equal(root.get(OrderFieldName.GIFT_CERTIFICATE).get(GiftCertificateFieldName.ID),
                 certificateId));
         em.getTransaction().begin();
         boolean result = em.createQuery(criteria).executeUpdate() > 0;
@@ -78,7 +72,7 @@ public class OrderDaoImpl implements OrderDao<Order> {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
         Root<Order> root = criteria.from(Order.class);
-        criteria.where(builder.equal(root.get(EntityFieldsName.GIFT_CERTIFICATE).get(EntityFieldsName.ID),
+        criteria.where(builder.equal(root.get(OrderFieldName.GIFT_CERTIFICATE).get(GiftCertificateFieldName.ID),
                 certificateId));
         List<Order> orders = em.createQuery(criteria).getResultList();
         em.close();
@@ -99,8 +93,8 @@ public class OrderDaoImpl implements OrderDao<Order> {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
         Root<Order> root = criteria.from(Order.class);
-        Predicate userPredicate = builder.equal(root.get(EntityFieldsName.USER).get(EntityFieldsName.ID), certificateId);
-        Predicate orderPredicate = builder.equal(root.get(EntityFieldsName.ID), orderId);
+        Predicate userPredicate = builder.equal(root.get(OrderFieldName.USER).get(UserFieldName.ID), certificateId);
+        Predicate orderPredicate = builder.equal(root.get(OrderFieldName.ID), orderId);
         criteria.where(userPredicate, orderPredicate);
         Optional<Order> result = em.createQuery(criteria).getResultStream().findAny();
         em.close();

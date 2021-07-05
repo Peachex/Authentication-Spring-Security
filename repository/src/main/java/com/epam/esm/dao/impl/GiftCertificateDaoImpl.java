@@ -1,7 +1,7 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.constant.entity.GiftCertificateFieldName;
 import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.constant.EntityFieldsName;
 import com.epam.esm.dao.creator.QueryCreator;
 import com.epam.esm.dao.creator.criteria.Criteria;
 import com.epam.esm.dto.GiftCertificate;
@@ -55,7 +55,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificat
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaDelete<GiftCertificate> criteria = builder.createCriteriaDelete(GiftCertificate.class);
         Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
-        criteria.where(builder.equal(root.get(EntityFieldsName.ID), id));
+        criteria.where(builder.equal(root.get(GiftCertificateFieldName.ID), id));
         em.getTransaction().begin();
         boolean result = em.createQuery(criteria).executeUpdate() == 1;
         em.getTransaction().commit();

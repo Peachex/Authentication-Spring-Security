@@ -1,6 +1,6 @@
 package com.epam.esm;
 
-import com.epam.esm.dao.constant.ProfileName;
+import com.epam.esm.constant.ProfileName;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringBootApp {
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(SpringBootApp.class);
-        application.setAdditionalProfiles(ProfileName.PRODUCTION);
+        application.setAdditionalProfiles(ProfileName.DEVELOPMENT);
         application.run(args);
     }
 }

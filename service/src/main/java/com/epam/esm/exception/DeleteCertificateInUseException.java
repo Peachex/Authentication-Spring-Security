@@ -1,6 +1,6 @@
 package com.epam.esm.exception;
 
-import com.epam.esm.dao.constant.ErrorAttribute;
+import com.epam.esm.constant.ErrorAttribute;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

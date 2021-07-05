@@ -1,7 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.dao.constant.ErrorAttribute;
+import com.epam.esm.constant.ErrorAttribute;
 import com.epam.esm.dto.Tag;
 import com.epam.esm.dto.User;
 import com.epam.esm.exception.InvalidFieldException;

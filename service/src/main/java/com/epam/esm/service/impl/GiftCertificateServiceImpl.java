@@ -1,8 +1,8 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.constant.entity.GiftCertificateFieldName;
 import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.constant.EntityFieldsName;
-import com.epam.esm.dao.constant.ErrorAttribute;
+import com.epam.esm.constant.ErrorAttribute;
 import com.epam.esm.dao.creator.criteria.Criteria;
 import com.epam.esm.dao.creator.criteria.search.FullMatchSearchCertificateCriteria;
 import com.epam.esm.dao.creator.criteria.search.PartMatchSearchCertificateCriteria;
@@ -33,9 +33,6 @@ import static com.epam.esm.validator.GiftCertificateValidator.isGiftCertificateC
 import static com.epam.esm.validator.GiftCertificateValidator.isNameValid;
 import static com.epam.esm.validator.GiftCertificateValidator.isPriceValid;
 
-/**
- * The type Gift certificate service.
- */
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCertificate> {
     private static final String ASC_SORT_ORDERING = "ASC";
@@ -43,12 +40,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     private final GiftCertificateDao<GiftCertificate> dao;
     private final TagService<Tag> tagService;
 
-    /**
-     * Instantiates a new Gift certificate service.
-     *
-     * @param dao        the dao
-     * @param tagService the tag service
-     */
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDao<GiftCertificate> dao, TagService<Tag> tagService) {
         this.dao = dao;
@@ -164,20 +155,23 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             certificateCriteriaList.add(new FullMatchSearchCertificateCriteria(tags));
         }
         if (isNameValid(certificateName)) {
-            certificateCriteriaList.add(new PartMatchSearchCertificateCriteria(EntityFieldsName.NAME, certificateName));
+            certificateCriteriaList.add(new PartMatchSearchCertificateCriteria(GiftCertificateFieldName.NAME,
+                    certificateName));
         }
         if (isDescriptionValid(certificateDescription)) {
-            certificateCriteriaList.add(new PartMatchSearchCertificateCriteria(EntityFieldsName.DESCRIPTION, certificateDescription));
+            certificateCriteriaList.add(new PartMatchSearchCertificateCriteria(GiftCertificateFieldName.DESCRIPTION,
+                    certificateDescription));
         }
         if (sortByName != null && !sortByName.isEmpty()) {
             String sortOrdering = sortByName.equalsIgnoreCase(ASC_SORT_ORDERING) ? ASC_SORT_ORDERING
                     : DESC_SORT_ORDERING;
-            certificateCriteriaList.add(new FieldSortCertificateCriteria(EntityFieldsName.NAME, sortOrdering));
+            certificateCriteriaList.add(new FieldSortCertificateCriteria(GiftCertificateFieldName.NAME, sortOrdering));
         }
         if (sortByDate != null && !sortByDate.isEmpty()) {
             String sortOrdering = sortByDate.equalsIgnoreCase(ASC_SORT_ORDERING) ? ASC_SORT_ORDERING
                     : DESC_SORT_ORDERING;
-            certificateCriteriaList.add(new FieldSortCertificateCriteria(EntityFieldsName.CREATE_DATE, sortOrdering));
+            certificateCriteriaList.add(new FieldSortCertificateCriteria(GiftCertificateFieldName.CREATE_DATE,
+                    sortOrdering));
         }
         return dao.findWithTags(page, elements, certificateCriteriaList);
     }

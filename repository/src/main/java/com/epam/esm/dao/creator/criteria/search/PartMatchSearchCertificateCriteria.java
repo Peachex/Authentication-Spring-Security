@@ -1,6 +1,6 @@
 package com.epam.esm.dao.creator.criteria.search;
 
-import com.epam.esm.dao.constant.Symbol;
+import com.epam.esm.constant.Symbol;
 import com.epam.esm.dto.GiftCertificate;
 
 import javax.persistence.criteria.CriteriaBuilder;
