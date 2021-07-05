@@ -49,8 +49,8 @@ public class TagServiceImplTest {
     @Test
     public void deleteTest() {
         when(dao.delete(anyLong())).thenReturn(true);
-        boolean actual = service.delete("11");
-        verify(dao);
+        service.delete("11");
+        verify(dao).delete(anyLong());
     }
 
     @Test
