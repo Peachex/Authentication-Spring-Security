@@ -12,11 +12,11 @@ import org.mockito.Mock;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.verify;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TagServiceImplTest {
@@ -50,7 +50,7 @@ public class TagServiceImplTest {
     public void deleteTest() {
         when(dao.delete(anyLong())).thenReturn(true);
         boolean actual = service.delete("11");
-        assertTrue(actual);
+        verify(dao);
     }
 
     @Test
