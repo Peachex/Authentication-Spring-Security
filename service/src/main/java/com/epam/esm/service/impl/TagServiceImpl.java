@@ -16,22 +16,22 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.epam.esm.validator.TagValidator.isNameValid;
-
 @Service
 public class TagServiceImpl implements TagService<Tag> {
     private final TagDao<Tag> dao;
     private final UserService<User> userService;
+    private final TagValidator validator;
 
     @Autowired
-    public TagServiceImpl(TagDao<Tag> dao, UserService<User> userService) {
+    public TagServiceImpl(TagDao<Tag> dao, UserService<User> userService, TagValidator validator) {
         this.dao = dao;
         this.userService = userService;
+        this.validator = validator;
     }
 
     @Override
     public long insert(Tag tag) {
-        if (!isNameValid(tag.getName())) {
+        if (!validator.isNameValid(tag.getName())) {
             throw new InvalidFieldException(ErrorCode.TAG, ErrorName.INVALID_TAG_ID, tag.getName());
         }
         if (dao.findByName(tag.getName()).isPresent()) {
@@ -52,7 +52,7 @@ public class TagServiceImpl implements TagService<Tag> {
 
     @Override
     public Tag findByName(String name) {
-        if (TagValidator.isNameValid(name)) {
+        if (validator.isNameValid(name)) {
             return dao.findByName(name).orElseThrow(() -> new ResourceNotFoundException(ErrorCode.TAG,
                     ErrorName.RESOURCE_NOT_FOUND, name));
         } else {

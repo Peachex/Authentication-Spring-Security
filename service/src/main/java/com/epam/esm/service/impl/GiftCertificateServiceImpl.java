@@ -14,6 +14,7 @@ import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
+import com.epam.esm.validator.GiftCertificateValidator;
 import com.epam.esm.validator.TagValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetUtils;
@@ -27,30 +28,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.epam.esm.validator.GiftCertificateValidator.areGiftCertificateTagsValid;
-import static com.epam.esm.validator.GiftCertificateValidator.isDescriptionValid;
-import static com.epam.esm.validator.GiftCertificateValidator.isDurationValid;
-import static com.epam.esm.validator.GiftCertificateValidator.isGiftCertificateCreationFormValid;
-import static com.epam.esm.validator.GiftCertificateValidator.isNameValid;
-import static com.epam.esm.validator.GiftCertificateValidator.isPriceValid;
-
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCertificate> {
     private static final String ASC_SORT_ORDERING = "ASC";
     private static final String DESC_SORT_ORDERING = "DESC";
     private final GiftCertificateDao<GiftCertificate> dao;
     private final TagService<Tag> tagService;
+    private final GiftCertificateValidator certificateValidator;
+    private final TagValidator tagValidator;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao<GiftCertificate> dao, TagService<Tag> tagService) {
+    public GiftCertificateServiceImpl(GiftCertificateDao<GiftCertificate> dao, TagService<Tag> tagService,
+                                      GiftCertificateValidator certificateValidator, TagValidator tagValidator) {
         this.dao = dao;
         this.tagService = tagService;
+        this.certificateValidator = certificateValidator;
+        this.tagValidator = tagValidator;
     }
 
     @Override
     public long insert(GiftCertificate giftCertificate) {
         long id;
-        if (isGiftCertificateCreationFormValid(giftCertificate)) {
+        if (certificateValidator.isGiftCertificateCreationFormValid(giftCertificate)) {
             giftCertificate.setCreateDate(LocalDateTime.now());
             if (!CollectionUtils.isEmpty(giftCertificate.getTags())) {
                 Set<Tag> allTags = new HashSet<>(tagService.findAll(0, 0));
@@ -147,16 +146,16 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                                                                     String certificateDescription, String sortByName,
                                                                     String sortByDate) {
         List<Criteria<GiftCertificate>> certificateCriteriaList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(tagsNames) && tagsNames.stream().allMatch(TagValidator::isNameValid)) {
+        if (!CollectionUtils.isEmpty(tagsNames) && tagsNames.stream().allMatch(tagValidator::isNameValid)) {
             List<Tag> tags = new ArrayList<>();
             tagsNames.forEach(t -> tags.add(tagService.findByName(t)));
             certificateCriteriaList.add(new FullMatchSearchCertificateCriteria(tags));
         }
-        if (isNameValid(certificateName)) {
+        if (certificateValidator.isNameValid(certificateName)) {
             certificateCriteriaList.add(new PartMatchSearchCertificateCriteria(GiftCertificateFieldName.NAME,
                     certificateName));
         }
-        if (isDescriptionValid(certificateDescription)) {
+        if (certificateValidator.isDescriptionValid(certificateDescription)) {
             certificateCriteriaList.add(new PartMatchSearchCertificateCriteria(GiftCertificateFieldName.DESCRIPTION,
                     certificateDescription));
         }
@@ -176,23 +175,23 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
 
     private boolean updateCertificateFields(GiftCertificate oldCertificate, GiftCertificate newCertificate) {
         boolean result = false;
-        if (isNameValid(newCertificate.getName())) {
+        if (certificateValidator.isNameValid(newCertificate.getName())) {
             oldCertificate.setName(newCertificate.getName());
             result = true;
         }
-        if (isDescriptionValid(newCertificate.getDescription())) {
+        if (certificateValidator.isDescriptionValid(newCertificate.getDescription())) {
             oldCertificate.setDescription(newCertificate.getDescription());
             result = true;
         }
-        if (isPriceValid(newCertificate.getPrice())) {
+        if (certificateValidator.isPriceValid(newCertificate.getPrice())) {
             oldCertificate.setPrice(newCertificate.getPrice());
             result = true;
         }
-        if (isDurationValid(newCertificate.getDuration())) {
+        if (certificateValidator.isDurationValid(newCertificate.getDuration())) {
             oldCertificate.setDuration(newCertificate.getDuration());
             result = true;
         }
-        if (areGiftCertificateTagsValid(newCertificate.getTags())) {
+        if (certificateValidator.areGiftCertificateTagsValid(newCertificate.getTags())) {
             oldCertificate.setTags(SetUtils.union(oldCertificate.getTags(), newCertificate.getTags()));
             result = true;
         }

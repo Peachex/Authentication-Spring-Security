@@ -3,12 +3,12 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.exception.InvalidFieldException;
+import com.epam.esm.validator.GiftCertificateValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
@@ -20,10 +20,10 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
 
-/**
- * The type Gift certificate service impl test.
- */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GiftCertificateServiceImplTest {
     private static GiftCertificate giftCertificate;
@@ -34,46 +34,38 @@ public class GiftCertificateServiceImplTest {
     @Mock
     private GiftCertificateDao<GiftCertificate> dao;
 
-    /**
-     * Init.
-     */
+    @Mock
+    private GiftCertificateValidator certificateValidator;
+
     @BeforeAll
     public void init() {
         MockitoAnnotations.initMocks(this);
-        service = new GiftCertificateServiceImpl(dao, null);
+        service = new GiftCertificateServiceImpl(dao, null, certificateValidator, null);
         giftCertificate = new GiftCertificate(2, "Sand", "Yellow sand", new BigDecimal("2"), 24,
                 LocalDateTime.of(2020, 5, 5, 23, 42, 12, 112000000),
                 null, new HashSet<>());
     }
 
-    /**
-     * Find all test.
-     */
     @Test
     public void findAllTest() {
         List<GiftCertificate> expected = new ArrayList<>();
         expected.add(giftCertificate);
-        Mockito.when(dao.findAll(0, 0)).thenReturn(expected);
+        when(dao.findAll(0, 0)).thenReturn(expected);
         List<GiftCertificate> actual = service.findAll(0, 0);
         assertEquals(expected, actual);
     }
 
-    /**
-     * Find by id test.
-     */
     @Test
     public void findByIdTest() {
         GiftCertificate expected = giftCertificate;
-        Mockito.when(dao.findById(Mockito.anyLong())).thenReturn(Optional.of(expected));
+        when(dao.findById(anyLong())).thenReturn(Optional.of(expected));
         GiftCertificate actual = service.findById("1");
         assertEquals(expected, actual);
     }
 
-    /**
-     * Insert test.
-     */
     @Test()
     public void insertTest() {
+        when(certificateValidator.isGiftCertificateCreationFormValid(any(GiftCertificate.class))).thenReturn(false);
         assertThrows(InvalidFieldException.class, () -> service.insert(giftCertificate));
     }
 }

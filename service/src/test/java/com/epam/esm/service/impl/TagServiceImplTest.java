@@ -2,6 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.Tag;
+import com.epam.esm.validator.TagValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -15,9 +16,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * The type Tag service impl test.
- */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TagServiceImplTest {
     @InjectMocks
@@ -26,30 +24,26 @@ public class TagServiceImplTest {
     @Mock
     private TagDao<Tag> dao;
 
-    /**
-     * Init.
-     */
+    @Mock
+    TagValidator validator;
+
     @BeforeAll
     public void init() {
         MockitoAnnotations.initMocks(this);
+        service = new TagServiceImpl(dao,null, validator);
     }
 
-    /**
-     * Insert test.
-     */
     @Test
     public void insertTest() {
         long expected = 11;
         Tag tag = new Tag("#new");
+        Mockito.when(validator.isNameValid(Mockito.anyString())).thenReturn(true);
         Mockito.when(dao.insert(tag)).thenReturn(11L);
         Mockito.when(dao.findByName(Mockito.anyString())).thenReturn(Optional.empty());
         long actual = service.insert(tag);
         assertEquals(expected, actual);
     }
 
-    /**
-     * Delete test.
-     */
     @Test
     public void deleteTest() {
         Mockito.when(dao.delete(Mockito.anyLong())).thenReturn(true);
@@ -57,9 +51,6 @@ public class TagServiceImplTest {
         assertTrue(actual);
     }
 
-    /**
-     * Find by id test.
-     */
     @Test
     public void findByIdTest() {
         Tag expected = new Tag("#cool");
