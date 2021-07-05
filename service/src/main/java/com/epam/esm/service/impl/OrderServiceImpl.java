@@ -3,7 +3,6 @@ package com.epam.esm.service.impl;
 import com.epam.esm.constant.error.ErrorCode;
 import com.epam.esm.constant.error.ErrorName;
 import com.epam.esm.dao.OrderDao;
-import com.epam.esm.constant.Symbol;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Order;
 import com.epam.esm.dto.User;
@@ -14,6 +13,7 @@ import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,16 +48,16 @@ public class OrderServiceImpl implements OrderService<Order> {
             order.setUser(user);
             return dao.insert(order);
         } catch (NumberFormatException e) {
-            throw new InvalidFieldException(ErrorCode.ORDER, ErrorName.INVALID_ID, userId + Symbol.COMMA +
-                    Symbol.SPACE + certificateId);
+            throw new InvalidFieldException(ErrorCode.ORDER, ErrorName.INVALID_ID, userId + "," +
+                    StringUtils.SPACE + certificateId);
         }
     }
 
     @Override
     public Order findByUserIdAndOrderId(String userId, String orderId) {
         return dao.findByUserIdAndOrderId(userService.findById(userId).getId(), findById(orderId).getId()).orElseThrow(
-                () -> new ResourceNotFoundException(ErrorCode.ORDER, ErrorName.RESOURCE_NOT_FOUND, userId +
-                        Symbol.COMMA + Symbol.SPACE + orderId));
+                () -> new ResourceNotFoundException(ErrorCode.ORDER, ErrorName.RESOURCE_NOT_FOUND, userId + "," +
+                        StringUtils.SPACE + orderId));
     }
 
     @Override
