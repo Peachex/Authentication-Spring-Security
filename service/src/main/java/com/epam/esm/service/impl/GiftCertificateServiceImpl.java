@@ -53,8 +53,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         if (isGiftCertificateCreationFormValid(giftCertificate)) {
             giftCertificate.setCreateDate(LocalDateTime.now());
             if (!CollectionUtils.isEmpty(giftCertificate.getTags())) {
-                Set<Tag> existingTags = SetUtils.intersection(new HashSet<>(tagService.findAll(0, 0)),
-                        giftCertificate.getTags());
+                Set<Tag> allTags = new HashSet<>(tagService.findAll(0, 0));
+                Set<Tag> existingTags = SetUtils.intersection(allTags, giftCertificate.getTags());
                 Set<Tag> newTags = new HashSet<>(CollectionUtils.removeAll(giftCertificate.getTags(), existingTags));
                 giftCertificate.setTags(newTags);
                 id = dao.insert(giftCertificate);
