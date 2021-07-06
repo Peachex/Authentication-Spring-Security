@@ -36,6 +36,9 @@ public class OrderServiceImpl implements OrderService<Order> {
 
     @Override
     public List<Order> findByUserId(int page, int elements, String id) {
+        if (page < 1 || elements < 1) {
+            throw new InvalidFieldException(ErrorCode.ORDER, ErrorName.INVALID_PAGINATION_DATA, page + ", " + elements);
+        }
         return dao.findByUserId(page, elements, userService.findById(id));
     }
 

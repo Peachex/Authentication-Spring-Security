@@ -69,6 +69,5 @@ public class GiftCertificate extends RepresentationModel<GiftCertificate> {
             joinColumns = {@JoinColumn(name = "gift_certificate_id_fk")},
             inverseJoinColumns = {@JoinColumn(name = "tag_id_fk")}
     )
-
     private Set<Tag> tags;
 }

@@ -19,20 +19,11 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * The type Gift certificate dao.
- */
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificate> {
     private final QueryCreator<GiftCertificate> criteriaCreator;
     private final EntityManagerFactory factory;
 
-    /**
-     * Instantiates a new Gift certificate dao.
-     *
-     * @param criteriaCreator the criteria creator
-     * @param factory         the factory
-     */
     @Autowired
     public GiftCertificateDaoImpl(QueryCreator<GiftCertificate> criteriaCreator, EntityManagerFactory factory) {
         this.criteriaCreator = criteriaCreator;
@@ -99,27 +90,24 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificat
         CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
         criteria.select(root);
-
-        List<GiftCertificate> giftCertificates = (page > 0 && elements > 0) ? em.createQuery(criteria)
-                .setMaxResults(elements).setFirstResult(elements * (page - 1)).getResultList() :
-                em.createQuery(criteria).getResultList();
-
+        List<GiftCertificate> giftCertificates = em.createQuery(criteria)
+                .setMaxResults(elements)
+                .setFirstResult(elements * (page - 1))
+                .getResultList();
         em.close();
         return giftCertificates;
     }
 
     @Override
-    public List<GiftCertificate> findWithTags(int page, int elements, List<Criteria<GiftCertificate>> certificateCriteriaList) {
+    public List<GiftCertificate> findWithTags(boolean isPaginationActive, int page, int elements,
+                                              List<Criteria<GiftCertificate>> certificateCriteriaList) {
         EntityManager em = factory.createEntityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
-
         criteriaCreator.createCriteria(certificateCriteriaList, criteria, builder, root);
-
-        List<GiftCertificate> giftCertificates = (page > 0 && elements > 0) ? em.createQuery(criteria)
-                .setMaxResults(elements).setFirstResult(elements * (page - 1)).getResultList() :
-                em.createQuery(criteria).getResultList();
+        List<GiftCertificate> giftCertificates = isPaginationActive ? em.createQuery(criteria).setMaxResults(elements)
+                .setFirstResult(elements * (page - 1)).getResultList() : em.createQuery(criteria).getResultList();
         em.close();
         return giftCertificates;
     }

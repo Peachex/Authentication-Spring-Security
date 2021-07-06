@@ -68,7 +68,15 @@ public class TagServiceImpl implements TagService<Tag> {
 
     @Override
     public List<Tag> findAll(int page, int elements) {
+        if (page < 1 || elements < 1) {
+            throw new InvalidFieldException(ErrorCode.TAG, ErrorName.INVALID_PAGINATION_DATA, page + ", " + elements);
+        }
         return dao.findAll(page, elements);
+    }
+
+    @Override
+    public List<Tag> findAll() {
+        return dao.findAll();
     }
 
     @Override

@@ -87,8 +87,22 @@ public class TagDaoImpl implements TagDao<Tag> {
         CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
         Root<Tag> root = criteria.from(Tag.class);
         criteria.select(root);
-        List<Tag> tags = (page > 0 && elements > 0) ? em.createQuery(criteria).setMaxResults(elements)
-                .setFirstResult(elements * (page - 1)).getResultList() : em.createQuery(criteria).getResultList();
+        List<Tag> tags = em.createQuery(criteria)
+                .setMaxResults(elements)
+                .setFirstResult(elements * (page - 1))
+                .getResultList();
+        em.close();
+        return tags;
+    }
+
+    @Override
+    public List<Tag> findAll() {
+        EntityManager em = factory.createEntityManager();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
+        Root<Tag> root = criteria.from(Tag.class);
+        criteria.select(root);
+        List<Tag> tags = em.createQuery(criteria).getResultList();
         em.close();
         return tags;
     }

@@ -50,8 +50,8 @@ public class GiftCertificateServiceImplTest {
     public void findAllTest() {
         List<GiftCertificate> expected = new ArrayList<>();
         expected.add(giftCertificate);
-        when(dao.findAll(0, 0)).thenReturn(expected);
-        List<GiftCertificate> actual = service.findAll(0, 0);
+        when(dao.findAll(1,1)).thenReturn(expected);
+        List<GiftCertificate> actual = service.findAll(1, 1);
         assertEquals(expected, actual);
     }
 

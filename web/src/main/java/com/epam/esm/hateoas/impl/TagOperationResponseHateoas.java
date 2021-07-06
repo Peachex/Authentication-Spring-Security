@@ -11,9 +11,6 @@ import java.util.List;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-/**
- * The type Tag operation response hateoas.
- */
 @Component
 public class TagOperationResponseHateoas implements Hateoas<OperationResponse> {
     private static final List<OperationResponse.Operation> operations = new ArrayList<>();
@@ -25,15 +22,9 @@ public class TagOperationResponseHateoas implements Hateoas<OperationResponse> {
 
     @Override
     public void createHateoas(OperationResponse response) {
-        response.add(linkTo(methodOn(TagController.class).findAllTags(0, 0)).withSelfRel());
-
         if (operations.stream().anyMatch(o -> o.getLocalizedOperationName().equalsIgnoreCase(response.getOperation()))) {
-            response.add(linkTo(methodOn(TagController.class).findTagById(findIdFromMessage(response.getMessage())))
+            response.add(linkTo(methodOn(TagController.class).findTagById(String.valueOf(response.getObjectId())))
                     .withSelfRel());
         }
-    }
-
-    private String findIdFromMessage(String message) {
-        return message.replaceAll("[^0-9]+", "");
     }
 }

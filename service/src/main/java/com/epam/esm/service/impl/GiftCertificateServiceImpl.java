@@ -52,7 +52,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         if (certificateValidator.isGiftCertificateCreationFormValid(giftCertificate)) {
             giftCertificate.setCreateDate(LocalDateTime.now());
             if (!CollectionUtils.isEmpty(giftCertificate.getTags())) {
-                Set<Tag> allTags = new HashSet<>(tagService.findAll(0, 0));
+                Set<Tag> allTags = new HashSet<>(tagService.findAll());
                 Set<Tag> existingTags = SetUtils.intersection(allTags, giftCertificate.getTags());
                 Set<Tag> newTags = new HashSet<>(CollectionUtils.removeAll(giftCertificate.getTags(), existingTags));
                 giftCertificate.setTags(newTags);
@@ -94,9 +94,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             if (updateCertificateFields(oldCertificate, newCertificate)) {
                 oldCertificate.setLastUpdateDate(LocalDateTime.now());
                 if (!CollectionUtils.isEmpty(oldCertificate.getTags())) {
-                    List<Tag> newTags = (List<Tag>) CollectionUtils.removeAll(oldCertificate.getTags(),
-                            CollectionUtils.intersection(tagService.findAll(0, 0), oldCertificate.getTags()));
+                    List<Tag> existingTags = (List<Tag>) CollectionUtils.intersection(tagService.findAll(),
+                            oldCertificate.getTags());
+
+                    List<Tag> newTags = (List<Tag>) CollectionUtils.removeAll(oldCertificate.getTags(), existingTags);
                     newTags.forEach(tagService::insert);
+
+                    Set<Tag> allCertificateTags = new HashSet<>(existingTags);
+                    allCertificateTags.addAll(newTags);
+                    oldCertificate.setTags(allCertificateTags);
                 }
                 dao.update(oldCertificate);
             } else {
@@ -112,7 +118,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     @Override
     public void disconnectTagById(String tagId) {
         Tag tag = tagService.findById(tagId);
-        List<GiftCertificate> certificatesWithSuchTag = findCertificatesWithTagsByCriteria(0, 0,
+        List<GiftCertificate> certificatesWithSuchTag = findCertificatesWithTagsByCriteria(false, 0, 0,
                 Collections.singletonList(tag.getName()), null, null, null, null);
         if (!CollectionUtils.isEmpty(certificatesWithSuchTag)) {
             for (GiftCertificate certificate : certificatesWithSuchTag) {
@@ -137,14 +143,22 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
 
     @Override
     public List<GiftCertificate> findAll(int page, int elements) {
+        if (page < 1 || elements < 1) {
+            throw new InvalidFieldException(ErrorCode.GIFT_CERTIFICATE, ErrorName.INVALID_PAGINATION_DATA,
+                    page + ", " + elements);
+        }
         return dao.findAll(page, elements);
     }
 
     @Override
-    public List<GiftCertificate> findCertificatesWithTagsByCriteria(int page, int elements, List<String> tagsNames,
-                                                                    String certificateName,
+    public List<GiftCertificate> findCertificatesWithTagsByCriteria(boolean isPaginationActive, int page, int elements,
+                                                                    List<String> tagsNames, String certificateName,
                                                                     String certificateDescription, String sortByName,
                                                                     String sortByDate) {
+        if (isPaginationActive && (page < 1 || elements < 1)) {
+            throw new InvalidFieldException(ErrorCode.GIFT_CERTIFICATE, ErrorName.INVALID_PAGINATION_DATA,
+                    page + ", " + elements);
+        }
         List<Criteria<GiftCertificate>> certificateCriteriaList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(tagsNames) && tagsNames.stream().allMatch(tagValidator::isNameValid)) {
             List<Tag> tags = new ArrayList<>();
@@ -170,7 +184,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             certificateCriteriaList.add(new FieldSortCertificateCriteria(GiftCertificateFieldName.CREATE_DATE,
                     sortOrdering));
         }
-        return dao.findWithTags(page, elements, certificateCriteriaList);
+        return dao.findWithTags(isPaginationActive, page, elements, certificateCriteriaList);
     }
 
     private boolean updateCertificateFields(GiftCertificate oldCertificate, GiftCertificate newCertificate) {

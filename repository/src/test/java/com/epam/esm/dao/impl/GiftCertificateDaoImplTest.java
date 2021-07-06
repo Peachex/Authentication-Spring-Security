@@ -51,7 +51,7 @@ public class GiftCertificateDaoImplTest {
         List<GiftCertificate> expected = new ArrayList<>();
         List<Criteria<GiftCertificate>> criteriaList = new ArrayList<>();
         criteriaList.add(new FullMatchSearchCertificateCriteria(TagFieldName.NAME, "#longverylongtagname"));
-        List<GiftCertificate> actual = dao.findWithTags(0, 0, criteriaList);
+        List<GiftCertificate> actual = dao.findWithTags(false, 0, 0, criteriaList);
         assertEquals(expected, actual);
     }
 

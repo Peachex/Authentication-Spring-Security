@@ -33,6 +33,9 @@ public class UserServiceImpl implements UserService<User> {
 
     @Override
     public List<User> findAll(int page, int elements) {
+        if (page < 1 || elements < 1) {
+            throw new InvalidFieldException(ErrorCode.USER, ErrorName.INVALID_PAGINATION_DATA, page + ", " + elements);
+        }
         return dao.findAll(page, elements);
     }
 }

@@ -10,18 +10,10 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-/**
- * The type Gift certificate hateoas.
- */
 @Component
 public class GiftCertificateHateoas implements Hateoas<GiftCertificate> {
     private final Hateoas<Tag> tagHateoas;
 
-    /**
-     * Instantiates a new Gift certificate hateoas.
-     *
-     * @param tagHateoas the tag hateoas
-     */
     @Autowired
     public GiftCertificateHateoas(Hateoas<Tag> tagHateoas) {
         this.tagHateoas = tagHateoas;
@@ -30,9 +22,6 @@ public class GiftCertificateHateoas implements Hateoas<GiftCertificate> {
     @Override
     public void createHateoas(GiftCertificate certificate) {
         if (certificate.getLinks().isEmpty()) {
-            certificate.add(linkTo(methodOn(GiftCertificateController.class).findAllGiftCertificates(0, 0))
-                    .withSelfRel());
-
             certificate.add(linkTo(methodOn(GiftCertificateController.class).findCertificateById(
                     String.valueOf(certificate.getId()))).withSelfRel());
 

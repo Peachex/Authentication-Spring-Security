@@ -45,8 +45,10 @@ public class OrderDaoImpl implements OrderDao<Order> {
         CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
         Root<Order> root = criteria.from(Order.class);
         criteria.where(builder.equal(root.get(OrderFieldName.USER), user));
-        List<Order> orders = (page > 0 && elements > 0) ? em.createQuery(criteria).setMaxResults(elements)
-                .setFirstResult(elements * (page - 1)).getResultList() : em.createQuery(criteria).getResultList();
+        List<Order> orders = em.createQuery(criteria)
+                .setMaxResults(elements)
+                .setFirstResult(elements * (page - 1))
+                .getResultList();
         em.close();
         return orders;
     }

@@ -13,18 +13,10 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * The type User dao.
- */
 @Repository
 public class UserDaoImpl implements UserDao<User> {
     private final EntityManagerFactory factory;
 
-    /**
-     * Instantiates a new User dao.
-     *
-     * @param factory the factory
-     */
     @Autowired
     public UserDaoImpl(EntityManagerFactory factory) {
         this.factory = factory;
@@ -45,8 +37,10 @@ public class UserDaoImpl implements UserDao<User> {
         CriteriaQuery<User> criteria = builder.createQuery(User.class);
         Root<User> root = criteria.from(User.class);
         criteria.select(root);
-        List<User> users = (page > 0 && elements > 0) ? em.createQuery(criteria).setMaxResults(elements)
-                .setFirstResult(elements * (page - 1)).getResultList() : em.createQuery(criteria).getResultList();
+        List<User> users = em.createQuery(criteria)
+                .setMaxResults(elements)
+                .setFirstResult(elements * (page - 1))
+                .getResultList();
         em.close();
         return users;
     }

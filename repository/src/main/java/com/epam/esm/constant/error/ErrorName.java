@@ -11,6 +11,7 @@ public class ErrorName {
     public static final String INVALID_ORDER_ID = "error.invalidOrderId";
     public static final String INVALID_ID = "error.invalidId";
     public static final String RESOURCE_NOT_FOUND = "error.resourceNotFound";
+    public static final String INVALID_PAGINATION_DATA = "error.invalidPaginationData";
 
     private ErrorName() {
 

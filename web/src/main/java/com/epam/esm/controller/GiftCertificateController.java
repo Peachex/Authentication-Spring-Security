@@ -53,8 +53,8 @@ public class GiftCertificateController {
                                                           @RequestParam(required = false) String certificateDescription,
                                                           @RequestParam(required = false) String sortByName,
                                                           @RequestParam(required = false) String sortByDate) {
-        List<GiftCertificate> giftCertificates = certificateService.findCertificatesWithTagsByCriteria(page, elements, tagsNames,
-                certificateName, certificateDescription, sortByName, sortByDate);
+        List<GiftCertificate> giftCertificates = certificateService.findCertificatesWithTagsByCriteria(true,
+                page, elements, tagsNames, certificateName, certificateDescription, sortByName, sortByDate);
         giftCertificates.forEach(certificateHateoas::createHateoas);
         return giftCertificates;
     }
