@@ -50,7 +50,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     public long insert(GiftCertificate giftCertificate) {
         long id;
         if (certificateValidator.isGiftCertificateCreationFormValid(giftCertificate)) {
-            giftCertificate.setCreateDate(LocalDateTime.now());
+            LocalDateTime currentTime = LocalDateTime.now();
+            giftCertificate.setCreateDate(currentTime);
+            giftCertificate.setLastUpdateDate(currentTime);
             if (!CollectionUtils.isEmpty(giftCertificate.getTags())) {
                 Set<Tag> allTags = new HashSet<>(tagService.findAll());
                 Set<Tag> existingTags = SetUtils.intersection(allTags, giftCertificate.getTags());
