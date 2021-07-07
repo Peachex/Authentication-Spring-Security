@@ -6,11 +6,11 @@ import com.epam.esm.constant.entity.UserFieldName;
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dto.Order;
 import com.epam.esm.dto.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,85 +21,66 @@ import java.util.Optional;
 
 @Repository
 public class OrderDaoImpl implements OrderDao<Order> {
-    private final EntityManagerFactory factory;
+    private EntityManager manager;
 
-    @Autowired
-    public OrderDaoImpl(EntityManagerFactory factory) {
-        this.factory = factory;
+    @PersistenceContext
+    public void setManager(EntityManager manager) {
+        this.manager = manager;
     }
 
+    @Transactional
     @Override
     public long insert(Order order) {
-        EntityManager em = factory.createEntityManager();
-        em.getTransaction().begin();
-        em.persist(order);
-        em.getTransaction().commit();
-        em.close();
+        manager.persist(order);
         return order.getId();
     }
 
     @Override
     public List<Order> findByUserId(int page, int elements, User user) {
-        EntityManager em = factory.createEntityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
         Root<Order> root = criteria.from(Order.class);
         criteria.where(builder.equal(root.get(OrderFieldName.USER), user));
-        List<Order> orders = em.createQuery(criteria)
+        return (manager.createQuery(criteria)
                 .setMaxResults(elements)
                 .setFirstResult(elements * (page - 1))
-                .getResultList();
-        em.close();
-        return orders;
+                .getResultList());
     }
 
+    @Transactional
     @Override
     public boolean deleteByCertificateId(long certificateId) {
-        EntityManager em = factory.createEntityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaDelete<Order> criteria = builder.createCriteriaDelete(Order.class);
         Root<Order> root = criteria.from(Order.class);
         criteria.where(builder.equal(root.get(OrderFieldName.GIFT_CERTIFICATE).get(GiftCertificateFieldName.ID),
                 certificateId));
-        em.getTransaction().begin();
-        boolean result = em.createQuery(criteria).executeUpdate() > 0;
-        em.getTransaction().commit();
-        em.close();
-        return result;
+        return manager.createQuery(criteria).executeUpdate() > 0;
     }
 
     @Override
     public List<Order> findByCertificateId(long certificateId) {
-        EntityManager em = factory.createEntityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
         Root<Order> root = criteria.from(Order.class);
         criteria.where(builder.equal(root.get(OrderFieldName.GIFT_CERTIFICATE).get(GiftCertificateFieldName.ID),
                 certificateId));
-        List<Order> orders = em.createQuery(criteria).getResultList();
-        em.close();
-        return orders;
+        return manager.createQuery(criteria).getResultList();
     }
 
     @Override
     public Optional<Order> findById(long id) {
-        EntityManager em = factory.createEntityManager();
-        Optional<Order> order = Optional.ofNullable(em.find(Order.class, id));
-        em.close();
-        return order;
+        return Optional.ofNullable(manager.find(Order.class, id));
     }
 
     @Override
     public Optional<Order> findByUserIdAndOrderId(long certificateId, long orderId) {
-        EntityManager em = factory.createEntityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
         Root<Order> root = criteria.from(Order.class);
         Predicate userPredicate = builder.equal(root.get(OrderFieldName.USER).get(UserFieldName.ID), certificateId);
         Predicate orderPredicate = builder.equal(root.get(OrderFieldName.ID), orderId);
         criteria.where(userPredicate, orderPredicate);
-        Optional<Order> result = em.createQuery(criteria).getResultStream().findAny();
-        em.close();
-        return result;
+        return manager.createQuery(criteria).getResultStream().findFirst();
     }
 }

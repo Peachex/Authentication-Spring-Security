@@ -8,9 +8,10 @@ import com.epam.esm.dto.GiftCertificate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
@@ -22,93 +23,75 @@ import java.util.Optional;
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificate> {
     private final QueryCreator<GiftCertificate> criteriaCreator;
-    private final EntityManagerFactory factory;
+    private EntityManager manager;
 
     @Autowired
-    public GiftCertificateDaoImpl(QueryCreator<GiftCertificate> criteriaCreator, EntityManagerFactory factory) {
+    public GiftCertificateDaoImpl(QueryCreator<GiftCertificate> criteriaCreator) {
         this.criteriaCreator = criteriaCreator;
-        this.factory = factory;
     }
 
+    @PersistenceContext
+    public void setManager(EntityManager manager) {
+        this.manager = manager;
+    }
+
+    @Transactional
     @Override
     public long insert(GiftCertificate giftCertificate) {
-        EntityManager em = factory.createEntityManager();
-        em.getTransaction().begin();
-        em.persist(giftCertificate);
-        em.getTransaction().commit();
-        em.close();
+        manager.persist(giftCertificate);
         return giftCertificate.getId();
     }
 
+    @Transactional
     @Override
     public boolean delete(long id) {
-        EntityManager em = factory.createEntityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaDelete<GiftCertificate> criteria = builder.createCriteriaDelete(GiftCertificate.class);
         Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
         criteria.where(builder.equal(root.get(GiftCertificateFieldName.ID), id));
-        em.getTransaction().begin();
-        boolean result = em.createQuery(criteria).executeUpdate() == 1;
-        em.getTransaction().commit();
-        em.close();
-        return result;
+        return manager.createQuery(criteria).executeUpdate() == 1;
     }
 
+    @Transactional
     @Override
     public boolean disconnectAllTags(GiftCertificate giftCertificate) {
-        EntityManager em = factory.createEntityManager();
-        em.getTransaction().begin();
         giftCertificate.setTags(null);
-        em.merge(giftCertificate);
-        em.getTransaction().commit();
-        em.close();
+        manager.merge(giftCertificate);
         return CollectionUtils.isEmpty(giftCertificate.getTags());
     }
 
+    @Transactional
     @Override
-    public boolean update(GiftCertificate giftCertificate) {
-        EntityManager em = factory.createEntityManager();
-        em.getTransaction().begin();
-        em.merge(giftCertificate);
-        em.getTransaction().commit();
-        em.close();
-        return true;
+    public void update(GiftCertificate giftCertificate) {
+        manager.clear();
+        manager.merge(giftCertificate);
     }
 
     @Override
     public Optional<GiftCertificate> findById(long id) {
-        EntityManager em = factory.createEntityManager();
-        Optional<GiftCertificate> giftCertificate = Optional.ofNullable(em.find(GiftCertificate.class, id));
-        em.close();
-        return giftCertificate;
+        return Optional.ofNullable(manager.find(GiftCertificate.class, id));
     }
 
     @Override
     public List<GiftCertificate> findAll(int page, int elements) {
-        EntityManager em = factory.createEntityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
         criteria.select(root);
-        List<GiftCertificate> giftCertificates = em.createQuery(criteria)
+        return (manager.createQuery(criteria)
                 .setMaxResults(elements)
                 .setFirstResult(elements * (page - 1))
-                .getResultList();
-        em.close();
-        return giftCertificates;
+                .getResultList());
     }
 
     @Override
     public List<GiftCertificate> findWithTags(boolean isPaginationActive, int page, int elements,
                                               List<Criteria<GiftCertificate>> certificateCriteriaList) {
-        EntityManager em = factory.createEntityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
         criteriaCreator.createCriteria(certificateCriteriaList, criteria, builder, root);
-        List<GiftCertificate> giftCertificates = isPaginationActive ? em.createQuery(criteria).setMaxResults(elements)
-                .setFirstResult(elements * (page - 1)).getResultList() : em.createQuery(criteria).getResultList();
-        em.close();
-        return giftCertificates;
+        return (isPaginationActive ? manager.createQuery(criteria).setMaxResults(elements)
+                .setFirstResult(elements * (page - 1)).getResultList() : manager.createQuery(criteria).getResultList());
     }
 }
