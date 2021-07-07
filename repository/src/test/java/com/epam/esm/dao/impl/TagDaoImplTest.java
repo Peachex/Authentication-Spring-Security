@@ -25,10 +25,9 @@ public class TagDaoImplTest {
     private TagDao<Tag> dao;
 
     @Test
-    public void findByNameTest() {
-        Optional<Tag> expected = Optional.of(new Tag("#funny"));
-        Optional<Tag> actual = dao.findByName("#funny");
-        assertEquals(expected, actual);
+    public void findAllTest() {
+        boolean actual = !dao.findAll().isEmpty();
+        assertTrue(actual);
     }
 
     @Test
