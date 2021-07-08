@@ -14,6 +14,5 @@ public class ErrorName {
     public static final String INVALID_PAGINATION_DATA = "error.invalidPaginationData";
 
     private ErrorName() {
-
     }
 }

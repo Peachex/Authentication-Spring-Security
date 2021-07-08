@@ -10,7 +10,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class UserHateoas implements Hateoas<User> {
-
     @Override
     public void createHateoas(User user) {
         if (user.getLinks().isEmpty()) {

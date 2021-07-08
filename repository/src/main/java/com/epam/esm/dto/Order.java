@@ -23,9 +23,6 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * The type Order.
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -56,8 +53,6 @@ public class Order extends RepresentationModel<Order> {
 
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(
-            name = "user_id_fk"
-    )
+    @JoinColumn(name = "user_id_fk")
     private User user;
 }
