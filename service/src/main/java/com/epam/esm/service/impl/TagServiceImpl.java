@@ -35,9 +35,17 @@ public class TagServiceImpl implements TagService<Tag> {
         if (!validator.isNameValid(tag.getName())) {
             throw new InvalidFieldException(ErrorCode.TAG, ErrorName.INVALID_TAG_ID, tag.getName());
         }
-        if (dao.findByName(tag.getName()).isPresent()) {
-            throw new ResourceDuplicateException(ErrorCode.TAG, ErrorName.TAG_DUPLICATE, tag.getName());
-        }//todo if exist change
+        Optional<Tag> tagOptional = dao.findByName(tag.getName());
+        if (tagOptional.isPresent()) {
+            Tag tagWithId = tagOptional.get();
+            if (!tagWithId.isAvailable()) {
+                tagWithId.setAvailable(true);
+                dao.update(tagWithId);
+                return tagWithId.getId();
+            } else {
+                throw new ResourceDuplicateException(ErrorCode.TAG, ErrorName.TAG_DUPLICATE, tag.getName());
+            }
+        }
         tag.setAvailable(true);
         return dao.insert(tag);
     }

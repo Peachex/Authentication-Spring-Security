@@ -26,14 +26,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-/**
- * The type Gift certificate.
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"id"}, callSuper = false)
+@EqualsAndHashCode(exclude = {"id", "isAvailable"}, callSuper = false)
 @ToString(exclude = {"id"})
 @EntityListeners(AuditListener.class)
 @Entity
@@ -44,6 +41,9 @@ public class GiftCertificate extends RepresentationModel<GiftCertificate> {
     @Column(name = "gift_certificate_id")
     @Setter(value = AccessLevel.NONE)
     private long id;
+
+    @Column(name = "is_available")
+    boolean isAvailable;
 
     @Column(name = "certificate_name")
     private String name;

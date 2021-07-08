@@ -9,7 +9,9 @@ import com.epam.esm.dao.creator.criteria.search.FullMatchSearchCertificateCriter
 import com.epam.esm.dao.creator.criteria.search.PartMatchSearchCertificateCriteria;
 import com.epam.esm.dao.creator.criteria.sort.FieldSortCertificateCriteria;
 import com.epam.esm.dto.GiftCertificate;
+import com.epam.esm.dto.Order;
 import com.epam.esm.dto.Tag;
+import com.epam.esm.exception.DeleteCertificateInUseException;
 import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
@@ -23,9 +25,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -53,11 +55,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             LocalDateTime currentTime = LocalDateTime.now();
             giftCertificate.setCreateDate(currentTime);
             giftCertificate.setLastUpdateDate(currentTime);
+            giftCertificate.setAvailable(true);
 
             if (!CollectionUtils.isEmpty(giftCertificate.getTags())) {
                 Set<Tag> allTags = new HashSet<>(tagService.findAll());
                 Set<Tag> existingTags = SetUtils.intersection(allTags, giftCertificate.getTags());
-                System.out.println("\n\n" + existingTags);
                 if (!existingTags.isEmpty()) {
                     existingTags.stream().filter(t -> !t.isAvailable()).peek(t -> t.setAvailable(true))
                             .forEach(t -> tagService.updateAvailability(String.valueOf(t.getId()), true));
@@ -81,14 +83,23 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     }
 
     @Override
-    public boolean delete(String id) {
+    public void delete(String id, List<Order> orders) {
         try {
-            GiftCertificate giftCertificate = dao.findById(Long.parseLong(id)).orElseThrow(() ->
+            GiftCertificate certificate = dao.findById(Long.parseLong(id)).orElseThrow(() ->
                     new ResourceNotFoundException(ErrorCode.GIFT_CERTIFICATE, ErrorName.RESOURCE_NOT_FOUND, id));
-            if (!CollectionUtils.isEmpty(giftCertificate.getTags())) {
-                dao.disconnectAllTags(giftCertificate);
+            if (CollectionUtils.isEmpty(orders)) {
+                if (!CollectionUtils.isEmpty(certificate.getTags())) {
+                    dao.disconnectAllTags(certificate);
+                }
+                dao.delete(certificate.getId());
+            } else {
+                if (LocalDateTime.now().isAfter(certificate.getCreateDate().plusDays(certificate.getDuration()))) {
+                    certificate.setAvailable(false);
+                    dao.update(certificate);
+                } else {
+                    throw new DeleteCertificateInUseException(ErrorCode.ORDER, ErrorName.CERTIFICATE_IN_USE, id);
+                }
             }
-            return dao.delete(giftCertificate.getId());
         } catch (NumberFormatException e) {
             throw new InvalidFieldException(ErrorCode.GIFT_CERTIFICATE, ErrorName.INVALID_GIFT_CERTIFICATE_ID, id);
         }
@@ -131,8 +142,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     @Override
     public GiftCertificate findById(String id) {
         try {
-            return dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException(
-                    ErrorCode.GIFT_CERTIFICATE, ErrorName.RESOURCE_NOT_FOUND, id));
+            Optional<GiftCertificate> certificateOptional = dao.findById(Long.parseLong(id));
+            if (!certificateOptional.isPresent() || !certificateOptional.get().isAvailable()) {
+                throw new ResourceNotFoundException(ErrorCode.GIFT_CERTIFICATE, ErrorName.RESOURCE_NOT_FOUND, id);
+            }
+            return certificateOptional.get();
         } catch (NumberFormatException e) {
             throw new InvalidFieldException(ErrorCode.GIFT_CERTIFICATE,
                     ErrorName.INVALID_GIFT_CERTIFICATE_ID, id);

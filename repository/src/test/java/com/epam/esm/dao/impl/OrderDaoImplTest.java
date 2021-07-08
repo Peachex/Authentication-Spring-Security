@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DirtiesContext
 @ContextConfiguration(classes = {OrderDaoImpl.class, GiftCertificateQueryCreator.class,
@@ -40,9 +39,9 @@ public class OrderDaoImplTest {
         order.setTimestamp(LocalDateTime.now());
 
         Set<Tag> tags = new HashSet<>();
-        tags.add(new Tag(3, "#warm"));
+        tags.add(new Tag(3, true, "#warm"));
 
-        order.setGiftCertificate(new GiftCertificate(5, "Ferry", "Ferryman", BigDecimal.valueOf(0.99), 14,
+        order.setGiftCertificate(new GiftCertificate(5, true, "Ferry", "Ferryman", BigDecimal.valueOf(0.99), 14,
                 LocalDateTime.of(2019, 11, 19, 11, 10, 11, 111000000), null, tags));
 
         long expected = 6;
@@ -55,11 +54,5 @@ public class OrderDaoImplTest {
         Optional<Order> expected = Optional.empty();
         Optional<Order> actual = dao.findById(12345);
         assertEquals(expected, actual);
-    }
-
-    @Test
-    public void deleteByCertificateIdTest() {
-        boolean actual = dao.deleteByCertificateId(1);
-        assertTrue(actual);
     }
 }

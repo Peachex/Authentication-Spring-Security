@@ -34,11 +34,11 @@ public class Tag extends RepresentationModel<Tag> {
     @Setter(value = AccessLevel.NONE)
     private long id;
 
-    @Column(name = "tag_name")
-    private String name;
-
     @Column(name = "is_available")
     boolean isAvailable;
+
+    @Column(name = "tag_name")
+    private String name;
 
     public Tag(String name) {
         this.name = name;

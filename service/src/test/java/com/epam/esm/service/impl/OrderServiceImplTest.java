@@ -5,7 +5,6 @@ import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Order;
 import com.epam.esm.dto.Tag;
 import com.epam.esm.dto.User;
-import com.epam.esm.exception.DeleteCertificateInUseException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,13 +15,11 @@ import org.mockito.Mock;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.any;
@@ -57,7 +54,7 @@ public class OrderServiceImplTest {
                 .thenReturn(new User(1, "Alice", "Green", "alice@gmail.com"));
 
         when(certificateService.findById(anyString()))
-                .thenReturn(new GiftCertificate(2, "Sand", "Yellow sand", new BigDecimal("2"),
+                .thenReturn(new GiftCertificate(2, true, "Sand", "Yellow sand", new BigDecimal("2"),
                         24, LocalDateTime.of(2020, 5, 5, 23, 42, 12,
                         112000000), null, new HashSet<>()));
 
@@ -73,33 +70,13 @@ public class OrderServiceImplTest {
         expected.setTimestamp(LocalDateTime.now());
 
         Set<Tag> tags = new HashSet<>();
-        tags.add(new Tag(3, "#warm"));
+        tags.add(new Tag(3, true, "#warm"));
 
-        expected.setGiftCertificate(new GiftCertificate(5, "Ferry", "Ferryman", BigDecimal.valueOf(0.99), 14,
+        expected.setGiftCertificate(new GiftCertificate(5, true, "Ferry", "Ferryman", BigDecimal.valueOf(0.99), 14,
                 LocalDateTime.of(2019, 11, 19, 11, 10, 11, 111000000), null, tags));
 
         when(dao.findById(anyLong())).thenReturn(Optional.of(expected));
         Order actual = orderService.findById("11");
         assertEquals(expected, actual);
-    }
-
-    @Test
-    public void deleteByCertificateIdTest() {
-        Order order = new Order();
-        order.setPrice(BigDecimal.TEN);
-        order.setUser(new User(1, "Alice", "Green", "alice@gmail.com"));
-        order.setTimestamp(LocalDateTime.now());
-
-        Set<Tag> tags = new HashSet<>();
-        tags.add(new Tag(3, "#warm"));
-
-        GiftCertificate certificate = new GiftCertificate(5, "Ferry", "Ferryman",
-                BigDecimal.valueOf(0.99), 26, LocalDateTime.of(2021, 6, 26, 11,
-                10, 11, 111000000), null, tags);
-        order.setGiftCertificate(certificate);
-
-        when(certificateService.findById(anyString())).thenReturn(certificate);
-        when(dao.findByCertificateId(anyLong())).thenReturn(Collections.singletonList(order));
-        assertThrows(DeleteCertificateInUseException.class, () -> orderService.deleteByCertificateId("1"));
     }
 }

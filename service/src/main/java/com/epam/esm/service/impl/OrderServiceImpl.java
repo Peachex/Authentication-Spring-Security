@@ -6,13 +6,11 @@ import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Order;
 import com.epam.esm.dto.User;
-import com.epam.esm.exception.DeleteCertificateInUseException;
 import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,13 +72,8 @@ public class OrderServiceImpl implements OrderService<Order> {
     }
 
     @Override
-    public boolean deleteByCertificateId(String certificateId) {
-        GiftCertificate certificate = certificateService.findById(certificateId);
-        if (LocalDateTime.now().isAfter(certificate.getCreateDate().plusDays(certificate.getDuration())) ||
-                CollectionUtils.isEmpty(dao.findByCertificateId(certificate.getId()))) {
-            return dao.deleteByCertificateId(certificate.getId());
-        }
-        throw new DeleteCertificateInUseException(ErrorCode.ORDER, ErrorName.CERTIFICATE_IN_USE, certificateId);
+    public List<Order> findWithCurrentCertificate(String certificateId) {
+        return dao.findByCertificateId(certificateService.findById(certificateId).getId());
     }
 
     private Order createOrder(GiftCertificate certificate) {

@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -45,17 +44,6 @@ public class OrderDaoImpl implements OrderDao<Order> {
                 .setMaxResults(elements)
                 .setFirstResult(elements * (page - 1))
                 .getResultList());
-    }
-
-    @Transactional
-    @Override
-    public boolean deleteByCertificateId(long certificateId) {
-        CriteriaBuilder builder = manager.getCriteriaBuilder();
-        CriteriaDelete<Order> criteria = builder.createCriteriaDelete(Order.class);
-        Root<Order> root = criteria.from(Order.class);
-        criteria.where(builder.equal(root.get(OrderFieldName.GIFT_CERTIFICATE).get(GiftCertificateFieldName.ID),
-                certificateId));
-        return manager.createQuery(criteria).executeUpdate() > 0;
     }
 
     @Override

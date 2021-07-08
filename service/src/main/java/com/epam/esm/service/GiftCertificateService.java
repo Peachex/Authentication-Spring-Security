@@ -1,15 +1,16 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.GiftCertificate;
+import com.epam.esm.dto.Order;
 
 import java.util.List;
 
 public interface GiftCertificateService<T extends GiftCertificate> {
     long insert(T t);
 
-    boolean delete(String id);
+    void delete(String id, List<Order> orders);
 
-    boolean update(String id, GiftCertificate giftCertificate);
+    boolean update(String id, T giftCertificate);
 
     T findById(String id);
 

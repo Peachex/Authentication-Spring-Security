@@ -41,7 +41,7 @@ public class GiftCertificateServiceImplTest {
     public void init() {
         initMocks(this);
         service = new GiftCertificateServiceImpl(dao, null, certificateValidator, null);
-        giftCertificate = new GiftCertificate(2, "Sand", "Yellow sand", new BigDecimal("2"), 24,
+        giftCertificate = new GiftCertificate(2, true, "Sand", "Yellow sand", new BigDecimal("2"), 24,
                 LocalDateTime.of(2020, 5, 5, 23, 42, 12, 112000000),
                 null, new HashSet<>());
     }
@@ -50,7 +50,7 @@ public class GiftCertificateServiceImplTest {
     public void findAllTest() {
         List<GiftCertificate> expected = new ArrayList<>();
         expected.add(giftCertificate);
-        when(dao.findAll(1,1)).thenReturn(expected);
+        when(dao.findAll(1, 1)).thenReturn(expected);
         List<GiftCertificate> actual = service.findAll(1, 1);
         assertEquals(expected, actual);
     }

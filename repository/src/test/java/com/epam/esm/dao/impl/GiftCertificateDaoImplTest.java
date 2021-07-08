@@ -43,6 +43,7 @@ public class GiftCertificateDaoImplTest {
         certificate.setDuration(11);
         certificate.setLastUpdateDate(null);
         certificate.setTags(null);
+        certificate.setAvailable(true);
         this.certificate = certificate;
     }
 
@@ -64,7 +65,7 @@ public class GiftCertificateDaoImplTest {
 
     @Test
     public void deleteTest() {
-        boolean actual = dao.delete(6);
+        boolean actual = dao.delete(5);
         assertTrue(actual);
     }
 

@@ -56,6 +56,7 @@ public class TagServiceImplTest {
     @Test
     public void findByIdTest() {
         Tag expected = new Tag("#cool");
+        expected.setAvailable(true);
         when(dao.findById(anyLong())).thenReturn(Optional.of(expected));
         Tag actual = service.findById("11");
         assertEquals(expected, actual);

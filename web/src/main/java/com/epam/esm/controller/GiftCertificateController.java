@@ -81,8 +81,7 @@ public class GiftCertificateController {
 
     @DeleteMapping("/{id}")
     public OperationResponse deleteGiftCertificate(HttpServletRequest request, @PathVariable String id) {
-        orderService.deleteByCertificateId(id);
-        certificateService.delete(id);
+        certificateService.delete(id, orderService.findWithCurrentCertificate(id));
         OperationResponse response = new OperationResponse(OperationResponse.Operation.DELETION,
                 ResponseMessageName.CERTIFICATE_DELETE_OPERATION, Long.parseLong(id), MessageLocale.defineLocale(
                 request.getHeader(HeaderName.LOCALE)));

@@ -77,7 +77,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificat
         CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
-        criteria.select(root);
+        criteria.select(root).where(builder.equal(root.get(GiftCertificateFieldName.IS_AVAILABLE), true));
         return (manager.createQuery(criteria)
                 .setMaxResults(elements)
                 .setFirstResult(elements * (page - 1))
