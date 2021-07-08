@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constant.HeaderName;
 import com.epam.esm.constant.ResponseMessageName;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Tag;
@@ -7,6 +8,7 @@ import com.epam.esm.hateoas.Hateoas;
 import com.epam.esm.response.OperationResponse;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
+import com.epam.esm.util.MessageLocale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -52,19 +55,21 @@ public class TagController {
     }
 
     @DeleteMapping("/{id}")
-    public OperationResponse deleteTag(@PathVariable String id) {
+    public OperationResponse deleteTag(HttpServletRequest request, @PathVariable String id) {
         certificateService.disconnectTagById(id);
         tagService.delete(id);
         OperationResponse response = new OperationResponse(OperationResponse.Operation.DELETION,
-                ResponseMessageName.TAG_DELETE_OPERATION, Long.parseLong(id));
+                ResponseMessageName.TAG_DELETE_OPERATION, Long.parseLong(id), MessageLocale.defineLocale(
+                request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);
         return response;
     }
 
     @PostMapping("/new")
-    public OperationResponse createTag(@RequestBody Tag tag) {
+    public OperationResponse createTag(HttpServletRequest request, @RequestBody Tag tag) {
         OperationResponse response = new OperationResponse(OperationResponse.Operation.CREATION,
-                ResponseMessageName.TAG_CREATE_OPERATION, tagService.insert(tag));
+                ResponseMessageName.TAG_CREATE_OPERATION, tagService.insert(tag), MessageLocale.defineLocale(
+                request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);
         return response;
     }

@@ -2,43 +2,34 @@ package com.epam.esm.util;
 
 import java.util.Locale;
 
-public final class MessageLocale {
-    private static Locale current;
+public enum MessageLocale {
+    RU("ru", "RU"),
+    EN("en", "US");
 
-    static {
-        current = new Locale(CustomLocale.EN.language, CustomLocale.EN.country);
+    private final String language;
+    private final String country;
+
+    MessageLocale(String language, String country) {
+        this.language = language;
+        this.country = country;
     }
 
-    private MessageLocale() {
+    public String getLanguage() {
+        return language;
     }
 
-    public static Locale getCurrent() {
-        return current;
+    public String getCountry() {
+        return country;
     }
 
-    public static void changeLocale() {
-        current = current.getLanguage().equals(CustomLocale.EN.language) ? new Locale(CustomLocale.RU.language,
-                CustomLocale.RU.country) : new Locale(CustomLocale.EN.language, CustomLocale.EN.country);
-    }
-
-    private enum CustomLocale {
-        RU("ru", "RU"),
-        EN("en", "US");
-
-        private final String language;
-        private final String country;
-
-        CustomLocale(String language, String country) {
-            this.language = language;
-            this.country = country;
+    public static Locale defineLocale(String localeStr) {
+        if (localeStr != null && !localeStr.isEmpty()) {
+            for (MessageLocale locale : MessageLocale.values()) {
+                if (locale.country.equalsIgnoreCase(localeStr) || locale.language.equalsIgnoreCase(localeStr)) {
+                    return new Locale(locale.language, locale.country);
+                }
+            }
         }
-
-        public String getLanguage() {
-            return language;
-        }
-
-        public String getCountry() {
-            return country;
-        }
+        return new Locale(EN.language, EN.country);
     }
 }

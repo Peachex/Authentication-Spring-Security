@@ -22,7 +22,8 @@ public class TagOperationResponseHateoas implements Hateoas<OperationResponse> {
 
     @Override
     public void createHateoas(OperationResponse response) {
-        if (operations.stream().anyMatch(o -> o.getLocalizedOperationName().equalsIgnoreCase(response.getOperation()))) {
+        if (operations.stream().anyMatch(o -> o.getLocalizedOperationName(response.getResponseLocale())
+                .equalsIgnoreCase(response.getOperation()))) {
             response.add(linkTo(methodOn(TagController.class).findTagById(String.valueOf(response.getObjectId())))
                     .withSelfRel());
         }

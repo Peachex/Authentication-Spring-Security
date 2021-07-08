@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constant.HeaderName;
 import com.epam.esm.constant.ResponseMessageName;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Order;
@@ -7,6 +8,7 @@ import com.epam.esm.hateoas.Hateoas;
 import com.epam.esm.response.OperationResponse;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.OrderService;
+import com.epam.esm.util.MessageLocale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -60,9 +63,11 @@ public class GiftCertificateController {
     }
 
     @PostMapping("/new")
-    public OperationResponse createGiftCertificate(@RequestBody GiftCertificate giftCertificate) {
+    public OperationResponse createGiftCertificate(HttpServletRequest request,
+                                                   @RequestBody GiftCertificate giftCertificate) {
         OperationResponse response = new OperationResponse(OperationResponse.Operation.CREATION,
-                ResponseMessageName.CERTIFICATE_CREATE_OPERATION, certificateService.insert(giftCertificate));
+                ResponseMessageName.CERTIFICATE_CREATE_OPERATION, certificateService.insert(giftCertificate),
+                MessageLocale.defineLocale(request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);
         return response;
     }
@@ -75,21 +80,23 @@ public class GiftCertificateController {
     }
 
     @DeleteMapping("/{id}")
-    public OperationResponse deleteGiftCertificate(@PathVariable String id) {
+    public OperationResponse deleteGiftCertificate(HttpServletRequest request, @PathVariable String id) {
         orderService.deleteByCertificateId(id);
         certificateService.delete(id);
         OperationResponse response = new OperationResponse(OperationResponse.Operation.DELETION,
-                ResponseMessageName.CERTIFICATE_DELETE_OPERATION, Long.parseLong(id));
+                ResponseMessageName.CERTIFICATE_DELETE_OPERATION, Long.parseLong(id), MessageLocale.defineLocale(
+                request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);
         return response;
     }
 
     @PatchMapping("/{id}")
-    public OperationResponse updateGiftCertificate(@PathVariable String id,
+    public OperationResponse updateGiftCertificate(HttpServletRequest request, @PathVariable String id,
                                                    @RequestBody GiftCertificate giftCertificate) {
         certificateService.update(id, giftCertificate);
         OperationResponse response = new OperationResponse(OperationResponse.Operation.UPDATE,
-                ResponseMessageName.CERTIFICATE_UPDATE_OPERATION, Long.parseLong(id));
+                ResponseMessageName.CERTIFICATE_UPDATE_OPERATION, Long.parseLong(id), MessageLocale.defineLocale(
+                request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);
         return response;
     }

@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constant.HeaderName;
 import com.epam.esm.constant.ResponseMessageName;
 import com.epam.esm.dto.Order;
 import com.epam.esm.dto.Tag;
@@ -9,6 +10,7 @@ import com.epam.esm.response.OperationResponse;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.UserService;
+import com.epam.esm.util.MessageLocale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -59,9 +62,11 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}/orders/new/{certificateId}")
-    public OperationResponse createOrder(@PathVariable String userId, @PathVariable String certificateId) {
+    public OperationResponse createOrder(HttpServletRequest request, @PathVariable String userId,
+                                         @PathVariable String certificateId) {
         OperationResponse response = new OperationResponse(OperationResponse.Operation.CREATION,
-                ResponseMessageName.ORDER_CREATE_OPERATION, orderService.createOrder(userId, certificateId));
+                ResponseMessageName.ORDER_CREATE_OPERATION, orderService.createOrder(userId, certificateId),
+                MessageLocale.defineLocale(request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);
         return response;
     }
