@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TagServiceImpl implements TagService<Tag> {
@@ -36,15 +37,19 @@ public class TagServiceImpl implements TagService<Tag> {
         }
         if (dao.findByName(tag.getName()).isPresent()) {
             throw new ResourceDuplicateException(ErrorCode.TAG, ErrorName.TAG_DUPLICATE, tag.getName());
-        }
+        }//todo if exist change
+        tag.setAvailable(true);
         return dao.insert(tag);
     }
 
     @Override
     public Tag findById(String id) {
         try {
-            return dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException(ErrorCode.TAG,
-                    ErrorName.RESOURCE_NOT_FOUND, id));
+            Optional<Tag> tagOptional = dao.findById(Long.parseLong(id));
+            if (!tagOptional.isPresent() || !tagOptional.get().isAvailable()) {
+                throw new ResourceNotFoundException(ErrorCode.TAG, ErrorName.RESOURCE_NOT_FOUND, id);
+            }
+            return tagOptional.get();
         } catch (NumberFormatException e) {
             throw new InvalidFieldException(ErrorCode.TAG, ErrorName.INVALID_TAG_ID, id);
         }
@@ -53,8 +58,11 @@ public class TagServiceImpl implements TagService<Tag> {
     @Override
     public Tag findByName(String name) {
         if (validator.isNameValid(name)) {
-            return dao.findByName(name).orElseThrow(() -> new ResourceNotFoundException(ErrorCode.TAG,
-                    ErrorName.RESOURCE_NOT_FOUND, name));
+            Optional<Tag> tagOptional = dao.findByName(name);
+            if (!tagOptional.isPresent() || !tagOptional.get().isAvailable()) {
+                throw new ResourceNotFoundException(ErrorCode.TAG, ErrorName.RESOURCE_NOT_FOUND, name);
+            }
+            return tagOptional.get();
         } else {
             throw new InvalidFieldException(ErrorCode.TAG, ErrorName.INVALID_TAG_NAME, name);
         }
@@ -80,12 +88,27 @@ public class TagServiceImpl implements TagService<Tag> {
     }
 
     @Override
-    public boolean delete(String id) {
+    public void delete(String id, boolean isTagInUse) {
         try {
-            if (!dao.delete(Long.parseLong(id))) {
-                throw new ResourceNotFoundException(ErrorCode.TAG, ErrorName.RESOURCE_NOT_FOUND, id);
+            if (isTagInUse) {
+                updateAvailability(id, false);
+            } else {
+                if (!dao.delete(Long.parseLong(id))) {
+                    throw new ResourceNotFoundException(ErrorCode.TAG, ErrorName.RESOURCE_NOT_FOUND, id);
+                }
             }
-            return true;
+        } catch (NumberFormatException e) {
+            throw new InvalidFieldException(ErrorCode.TAG, ErrorName.INVALID_TAG_ID, id);
+        }
+    }
+
+    @Override
+    public void updateAvailability(String id, boolean isAvailable) {
+        try {
+            Tag tag = dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException(ErrorCode.TAG,
+                    ErrorName.RESOURCE_NOT_FOUND, id));
+            tag.setAvailable(isAvailable);
+            dao.update(tag);
         } catch (NumberFormatException e) {
             throw new InvalidFieldException(ErrorCode.TAG, ErrorName.INVALID_TAG_ID, id);
         }

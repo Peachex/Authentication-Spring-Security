@@ -12,8 +12,9 @@ CREATE TABLE gift_certificates
 
 CREATE TABLE tags
 (
-    tag_id   bigint       NOT NULL AUTO_INCREMENT,
-    tag_name varchar(256) NOT NULL,
+    tag_id       bigint       NOT NULL AUTO_INCREMENT,
+    tag_name     varchar(256) NOT NULL,
+    is_available bit          NOT NULL,
     PRIMARY KEY (tag_id)
 );
 
@@ -41,6 +42,6 @@ CREATE TABLE orders
     price                  decimal(10, 0) NOT NULL,
     timestamp              datetime       NOT NULL,
     gift_certificate_id_fk bigint         NOT NULL REFERENCES gift_certificates (gift_certificate_id),
-    user_id_fk               bigint NOT NULL REFERENCES users (user_id),
+    user_id_fk             bigint         NOT NULL REFERENCES users (user_id),
     PRIMARY KEY (order_id)
 );

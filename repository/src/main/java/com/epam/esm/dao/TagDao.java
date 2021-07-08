@@ -19,4 +19,6 @@ public interface TagDao<T extends Tag> {
     List<T> findAll();
 
     boolean delete(long id);
+
+    void update(T t);
 }

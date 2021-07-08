@@ -73,7 +73,7 @@ public class TagDaoImpl implements TagDao<Tag> {
         CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
         Root<Tag> root = criteria.from(Tag.class);
-        criteria.select(root);
+        criteria.select(root).where(builder.equal(root.get(TagFieldName.IS_AVAILABLE), true));
         return (manager.createQuery(criteria)
                 .setMaxResults(elements)
                 .setFirstResult(elements * (page - 1))
@@ -96,6 +96,13 @@ public class TagDaoImpl implements TagDao<Tag> {
         CriteriaDelete<Tag> criteria = builder.createCriteriaDelete(Tag.class);
         Root<Tag> root = criteria.from(Tag.class);
         criteria.where(builder.equal(root.get(TagFieldName.ID), id));
-        return manager.createQuery(criteria).executeUpdate() == 1;
+        return (manager.createQuery(criteria).executeUpdate() == 1);
+    }
+
+    @Transactional
+    @Override
+    public void update(Tag tag) {
+        manager.clear();
+        manager.merge(tag);
     }
 }

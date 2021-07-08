@@ -1,8 +1,8 @@
-INSERT INTO tags (tag_id ,tag_name) VALUES('1','#funny');
-INSERT INTO tags (tag_id ,tag_name) VALUES('2','#cool');
-INSERT INTO tags (tag_id ,tag_name) VALUES('3','#warm');
-INSERT INTO tags (tag_id ,tag_name) VALUES('4','#cold');
-INSERT INTO tags (tag_id ,tag_name) VALUES('5','#relax');
+INSERT INTO tags (tag_id ,tag_name, is_available) VALUES('1','#funny', '1');
+INSERT INTO tags (tag_id ,tag_name, is_available) VALUES('2','#cool', '1');
+INSERT INTO tags (tag_id ,tag_name, is_available) VALUES('3','#warm', '1');
+INSERT INTO tags (tag_id ,tag_name, is_available) VALUES('4','#cold', '1');
+INSERT INTO tags (tag_id ,tag_name, is_available) VALUES('5','#relax', '1');
 
 INSERT INTO gift_certificates (gift_certificate_id, certificate_name, description, price, duration, create_date)
 VALUES(1, 'Car', 'Fast car', '9999.99', 4, '2011-11-19T11:10:11.111');

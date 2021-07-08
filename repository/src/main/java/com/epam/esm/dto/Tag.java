@@ -18,9 +18,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/**
- * The type Tag.
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -40,11 +37,9 @@ public class Tag extends RepresentationModel<Tag> {
     @Column(name = "tag_name")
     private String name;
 
-    /**
-     * Instantiates a new Tag.
-     *
-     * @param name the name
-     */
+    @Column(name = "is_available")
+    boolean isAvailable;
+
     public Tag(String name) {
         this.name = name;
     }

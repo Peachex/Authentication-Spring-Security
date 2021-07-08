@@ -1,11 +1,12 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Tag;
 
 import java.util.List;
 
 public interface TagService<T extends Tag> {
-    long insert(Tag tag);
+    long insert(T t);
 
     T findById(String id);
 
@@ -17,5 +18,7 @@ public interface TagService<T extends Tag> {
 
     List<T> findAll();
 
-    boolean delete(String id);
+    void delete(String id, boolean isTagInUse);
+
+    void updateAvailability(String id, boolean isAvailable);
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -56,8 +57,10 @@ public class TagController {
 
     @DeleteMapping("/{id}")
     public OperationResponse deleteTag(HttpServletRequest request, @PathVariable String id) {
-        certificateService.disconnectTagById(id);
-        tagService.delete(id);
+        Tag tag = tagService.findById(id);
+        List<GiftCertificate> certificatesWithCurrentTag = certificateService.findCertificatesWithTagsByCriteria(
+                false, 0, 0, Collections.singletonList(tag.getName()), null, null, null, null);
+        tagService.delete(id, !certificatesWithCurrentTag.isEmpty());
         OperationResponse response = new OperationResponse(OperationResponse.Operation.DELETION,
                 ResponseMessageName.TAG_DELETE_OPERATION, Long.parseLong(id), MessageLocale.defineLocale(
                 request.getHeader(HeaderName.LOCALE)));

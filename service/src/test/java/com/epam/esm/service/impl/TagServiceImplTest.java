@@ -49,7 +49,7 @@ public class TagServiceImplTest {
     @Test
     public void deleteTest() {
         when(dao.delete(anyLong())).thenReturn(true);
-        service.delete("11");
+        service.delete("11", false);
         verify(dao).delete(anyLong());
     }
 
