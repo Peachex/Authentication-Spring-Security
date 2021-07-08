@@ -53,11 +53,19 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             LocalDateTime currentTime = LocalDateTime.now();
             giftCertificate.setCreateDate(currentTime);
             giftCertificate.setLastUpdateDate(currentTime);
+
             if (!CollectionUtils.isEmpty(giftCertificate.getTags())) {
                 Set<Tag> allTags = new HashSet<>(tagService.findAll());
                 Set<Tag> existingTags = SetUtils.intersection(allTags, giftCertificate.getTags());
+                System.out.println("\n\n" + existingTags);
+                if (!existingTags.isEmpty()) {
+                    existingTags.stream().filter(t -> !t.isAvailable()).peek(t -> t.setAvailable(true))
+                            .forEach(t -> tagService.updateAvailability(String.valueOf(t.getId()), true));
+                }
                 Set<Tag> newTags = new HashSet<>(CollectionUtils.removeAll(giftCertificate.getTags(), existingTags));
+                newTags.forEach(t -> t.setAvailable(true));
                 giftCertificate.setTags(newTags);
+
                 id = dao.insert(giftCertificate);
                 GiftCertificate certificateWithAllTags = dao.findById(id).get();
                 certificateWithAllTags.setTags(SetUtils.union(newTags, existingTags));
@@ -99,6 +107,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                     List<Tag> existingTags = (List<Tag>) CollectionUtils.intersection(tagService.findAll(),
                             oldCertificate.getTags());
 
+                    existingTags.stream().filter(t -> !t.isAvailable()).peek(t -> t.setAvailable(true))
+                            .forEach(t -> tagService.updateAvailability(String.valueOf(t.getId()), true));
+
                     List<Tag> newTags = (List<Tag>) CollectionUtils.removeAll(oldCertificate.getTags(), existingTags);
                     newTags.forEach(tagService::insert);
 
@@ -115,21 +126,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             throw new InvalidFieldException(ErrorCode.GIFT_CERTIFICATE, ErrorName.INVALID_GIFT_CERTIFICATE_ID, id);
         }
         return true;
-    }
-
-    @Override
-    public void disconnectTagById(String tagId) {
-        Tag tag = tagService.findById(tagId);
-        List<GiftCertificate> certificatesWithSuchTag = findCertificatesWithTagsByCriteria(false, 0, 0,
-                Collections.singletonList(tag.getName()), null, null, null, null);
-        if (!CollectionUtils.isEmpty(certificatesWithSuchTag)) {
-            for (GiftCertificate certificate : certificatesWithSuchTag) {
-                Set<Tag> updatedTags = certificate.getTags();
-                updatedTags.remove(tag);
-                certificate.setTags(updatedTags);
-                dao.update(certificate);
-            }
-        }
     }
 
     @Override

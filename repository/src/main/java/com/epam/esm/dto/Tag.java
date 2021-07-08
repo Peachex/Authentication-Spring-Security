@@ -22,7 +22,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"id"}, callSuper = false)
+@EqualsAndHashCode(exclude = {"id", "isAvailable"}, callSuper = false)
 @ToString(exclude = {"id"})
 @EntityListeners(AuditListener.class)
 @Entity
