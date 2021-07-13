@@ -3,13 +3,13 @@ package com.epam.esm.service.impl;
 import com.epam.esm.constant.error.ErrorCode;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.constant.error.ErrorName;
-import com.epam.esm.dto.SecurityUser;
 import com.epam.esm.dto.User;
 import com.epam.esm.dto.UserRole;
 import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ResourceDuplicateException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.UserService;
+import com.epam.esm.util.UserDetailsConverter;
 import com.epam.esm.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,12 +24,15 @@ public class UserServiceImpl implements UserService<User> {
     private final UserDao<User> dao;
     private final UserValidator validator;
     private final PasswordEncoder encryptor;
+    private final UserDetailsConverter userDetailsConverter;
 
     @Autowired
-    public UserServiceImpl(UserDao<User> dao, UserValidator validator, PasswordEncoder encryptor) {
+    public UserServiceImpl(UserDao<User> dao, UserValidator validator, PasswordEncoder encryptor,
+                           UserDetailsConverter userDetailsConverter) {
         this.dao = dao;
         this.validator = validator;
         this.encryptor = encryptor;
+        this.userDetailsConverter = userDetailsConverter;
     }
 
     @Override
@@ -74,6 +77,6 @@ public class UserServiceImpl implements UserService<User> {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = dao.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(
                 ErrorCode.USER, ErrorName.RESOURCE_NOT_FOUND, email));
-        return SecurityUser.fromUser(user);
+        return userDetailsConverter.convert(user);
     }
 }
