@@ -12,8 +12,6 @@ subprojects {
     version '1.0'
 
     dependencies {
-        //todo move unnecessary dependencies
-        implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.5.1'
         testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.5.1'
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.5.1'
