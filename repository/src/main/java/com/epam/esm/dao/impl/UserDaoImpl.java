@@ -4,6 +4,7 @@ import com.epam.esm.constant.entity.UserFieldName;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.User;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -46,5 +47,12 @@ public class UserDaoImpl implements UserDao<User> {
                 .setMaxResults(elements)
                 .setFirstResult(elements * (page - 1))
                 .getResultList());
+    }
+
+    @Transactional
+    @Override
+    public long insert(User user) {
+        manager.persist(user);
+        return user.getId();
     }
 }

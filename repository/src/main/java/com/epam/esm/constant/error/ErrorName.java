@@ -14,6 +14,8 @@ public class ErrorName {
     public static final String INVALID_PAGINATION_DATA = "error.invalidPaginationData";
     public static final String INVALID_AUTH_TOKEN = "error.invalidToken";
     public static final String INVALID_USER_CREDENTIAL = "error.invalidUserCredential";
+    public static final String INVALID_USER = "error.invalidUser";
+    public static final String USER_EMAIL_IN_USE = "error.emailInUse";
 
     private ErrorName() {
     }

@@ -41,6 +41,7 @@ public class OperationResponse extends RepresentationModel<OperationResponse> {
         this.objectId = objectId;
         this.message = ResourceBundle.getBundle(PropertyFileName.OPERATION_RESPONSE_MESSAGES,
                 locale).getString(messageKey) + StringUtils.SPACE + objectId;
+        this.token = "";
     }
 
     public OperationResponse(Operation operation, String messageKey, long objectId, Locale locale, String token) {

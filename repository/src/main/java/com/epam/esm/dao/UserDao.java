@@ -11,4 +11,6 @@ public interface UserDao<T extends User> {
     Optional<T> findByEmail(String email);
 
     List<T> findAll(int page, int elements);
+
+    long insert(T t);
 }

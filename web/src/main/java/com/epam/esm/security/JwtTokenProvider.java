@@ -34,7 +34,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
         Date now = new Date();
-        Date validity = new Date(now.getTime() + 10 * 1000); //fixme add constant and change time
+        Date validity = new Date(now.getTime() + 60 * 1000); //fixme add constant and change time
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)

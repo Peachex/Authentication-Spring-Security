@@ -12,4 +12,6 @@ public interface UserService<T extends User> extends UserDetailsService {
     T findByEmail(String email);
 
     List<T> findAll(int page, int elements);
+
+    long insert(T t);
 }

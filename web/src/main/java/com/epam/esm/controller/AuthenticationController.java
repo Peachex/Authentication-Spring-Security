@@ -7,11 +7,13 @@ import com.epam.esm.constant.error.ErrorName;
 import com.epam.esm.dto.User;
 import com.epam.esm.dto.UserCredential;
 import com.epam.esm.exception.InvalidUserCredentialException;
+import com.epam.esm.hateoas.Hateoas;
 import com.epam.esm.response.OperationResponse;
 import com.epam.esm.security.JwtTokenProvider;
 import com.epam.esm.service.UserService;
 import com.epam.esm.util.MessageLocale;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -28,12 +30,16 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final UserService<User> service;
     private final JwtTokenProvider jwtTokenProvider;
+    private final Hateoas<OperationResponse> hateoas;
 
     @Autowired
-    public AuthenticationController(AuthenticationManager authenticationManager, UserService<User> service, JwtTokenProvider jwtTokenProvider) {
+    public AuthenticationController(AuthenticationManager authenticationManager, UserService<User> service,
+                                    JwtTokenProvider jwtTokenProvider, @Qualifier("userOperationResponseHateoas")
+                                            Hateoas<OperationResponse> hateoas) {
         this.authenticationManager = authenticationManager;
         this.service = service;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.hateoas = hateoas;
     }
 
     @PostMapping("/login")
@@ -49,5 +55,14 @@ public class AuthenticationController {
             throw new InvalidUserCredentialException(ErrorCode.AUTHENTICATION, ErrorName.INVALID_USER_CREDENTIAL,
                     credential.getEmail());
         }
+    }
+
+    @PostMapping("/register")
+    public OperationResponse register(HttpServletRequest request, @RequestBody User user) {
+        OperationResponse response = new OperationResponse(OperationResponse.Operation.CREATION,
+                ResponseMessageName.USER_REGISTER_OPERATION, service.insert(user), MessageLocale.defineLocale(
+                request.getHeader(HeaderName.LOCALE)));
+        hateoas.createHateoas(response);
+        return response;
     }
 }

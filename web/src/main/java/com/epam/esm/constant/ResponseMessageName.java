@@ -10,8 +10,9 @@ public class ResponseMessageName {
     public static final String CREATION_OPERATION = "operation.creation";
     public static final String DELETION_OPERATION = "operation.deletion";
     public static final String UPDATE_OPERATION = "operation.update";
-    public static final String AUTHORIZATION_OPERATION ="operation.authorization";
+    public static final String AUTHORIZATION_OPERATION = "operation.authorization";
     public static final String USER_LOGIN_OPERATION = "operation.userLogin";
+    public static final String USER_REGISTER_OPERATION = "operation.userRegister";
 
     private ResponseMessageName() {
     }
