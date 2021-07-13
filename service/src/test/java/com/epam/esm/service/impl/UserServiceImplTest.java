@@ -2,6 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.User;
+import com.epam.esm.dto.UserRole;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -33,7 +34,7 @@ public class UserServiceImplTest {
 
     @Test
     public void findById() {
-        User expected = new User(1, "Alice", "Green", "alice@gmail.com");
+        User expected = new User(1, "Alice", "Green", "alice@gmail.com", "password", UserRole.ADMIN, true);
         when(dao.findById(anyLong())).thenReturn(Optional.of(expected));
         User actual = service.findById("11");
         assertEquals(expected, actual);

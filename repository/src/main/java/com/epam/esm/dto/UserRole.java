@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public enum UserRole {
     USER(SetUtils.hashSet(Permission.TAGS_READ, Permission.CERTIFICATES_READ, Permission.USERS_READ,
-            Permission.ORDERS_READ, Permission.ORDERS_WRITE)),
+            Permission.USERS_WRITE)),
     ADMIN(SetUtils.hashSet(Permission.values()));
 
     private final Set<Permission> permissions;

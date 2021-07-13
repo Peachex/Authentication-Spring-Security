@@ -7,6 +7,7 @@ import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Order;
 import com.epam.esm.dto.Tag;
 import com.epam.esm.dto.User;
+import com.epam.esm.dto.UserRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +36,7 @@ public class OrderDaoImplTest {
     public void insertTest() {
         Order order = new Order();
         order.setPrice(BigDecimal.TEN);
-        order.setUser(new User(1, "Alice", "Green", "alice@gmail.com"));
+        order.setUser(new User(1, "Alice", "Green", "alice@gmail.com", "password", UserRole.ADMIN, true));
         order.setTimestamp(LocalDateTime.now());
 
         Set<Tag> tags = new HashSet<>();

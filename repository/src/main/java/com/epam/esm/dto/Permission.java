@@ -9,8 +9,7 @@ public enum Permission {
     CERTIFICATES_EDIT("certificates:edit"),
     CERTIFICATES_DELETE("certificates:delete"),
     USERS_READ("users:read"),
-    ORDERS_READ("orders:read"),
-    ORDERS_WRITE("orders:write");
+    USERS_WRITE("users:write");
 
     private final String permission;
 

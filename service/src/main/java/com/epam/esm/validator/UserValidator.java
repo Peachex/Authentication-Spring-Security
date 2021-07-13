@@ -16,7 +16,7 @@ public class UserValidator {
 
     public boolean isUserValid(User user) {
         return (isNameValid(user.getFirstName()) && isNameValid(user.getLastName()) && isEmailValid(user.getEmail()) &&
-                isPasswordValid(user.getPassword()) && user.getRole() == null && !user.isActive() && user.getId() == 0); //todo maybe bug with isActive
+                isPasswordValid(user.getPassword()) && user.getRole() == null && !user.isActive() && user.getId() == 0);
     }
 
     public boolean isNameValid(String name) {

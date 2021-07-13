@@ -3,6 +3,7 @@ package com.epam.esm.dao.impl;
 import com.epam.esm.config.EntityManagerFactoryConfiguration;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.User;
+import com.epam.esm.dto.UserRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +28,8 @@ public class UserDaoImplTest {
 
     @Test
     public void findByIdTest() {
-        Optional<User> expected = Optional.of(new User(1, "Alice", "Green", "alice@gmail.com"));
+        Optional<User> expected = Optional.of(new User(1, "Alice", "Green", "alice@gmail.com",
+                "$2y$12$XRUTT3VBVCzf64HS.fCcse0QhSiFZlfTb7E8XZ6iBzTjvPyhC8h.W", UserRole.ADMIN, true));
         Optional<User> actual = dao.findById(1);
         assertEquals(expected, actual);
     }

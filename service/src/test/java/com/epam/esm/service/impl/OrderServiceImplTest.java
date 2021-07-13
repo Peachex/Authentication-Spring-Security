@@ -5,6 +5,7 @@ import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Order;
 import com.epam.esm.dto.Tag;
 import com.epam.esm.dto.User;
+import com.epam.esm.dto.UserRole;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
@@ -51,7 +52,7 @@ public class OrderServiceImplTest {
         when(dao.insert(any())).thenReturn(expected);
 
         when(userService.findById(anyString()))
-                .thenReturn(new User(1, "Alice", "Green", "alice@gmail.com"));
+                .thenReturn(new User(1, "Alice", "Green", "alice@gmail.com", "password", UserRole.ADMIN, true));
 
         when(certificateService.findById(anyString()))
                 .thenReturn(new GiftCertificate(2, true, "Sand", "Yellow sand", new BigDecimal("2"),
@@ -66,7 +67,7 @@ public class OrderServiceImplTest {
     public void findByIdTest() {
         Order expected = new Order();
         expected.setPrice(BigDecimal.TEN);
-        expected.setUser(new User(1, "Alice", "Green", "alice@gmail.com"));
+        expected.setUser(new User(1, "Alice", "Green", "alice@gmail.com", "password", UserRole.ADMIN, true));
         expected.setTimestamp(LocalDateTime.now());
 
         Set<Tag> tags = new HashSet<>();
