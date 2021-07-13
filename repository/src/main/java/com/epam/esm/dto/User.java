@@ -13,6 +13,8 @@ import org.springframework.hateoas.RepresentationModel;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +25,7 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {"id"}, callSuper = false)
-@ToString(exclude = {"id"})
+@ToString(exclude = {"id", "password"})
 @EntityListeners(AuditListener.class)
 @Entity
 @Table(name = "users")
@@ -42,4 +44,14 @@ public class User extends RepresentationModel<User> {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "password")
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private UserRole role;
+
+    @Column(name = "is_active")
+    private boolean isActive;
 }

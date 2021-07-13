@@ -34,6 +34,9 @@ CREATE TABLE users
     first_name varchar(256) NOT NULL,
     last_name  varchar(256) NOT NULL,
     email      varchar(320) NOT NULL,
+    password   varchar(256) NOT NULL,
+    role       varchar(256) NOT NULL,
+    is_active  bit          NOT NULL,
     PRIMARY KEY (user_id)
 );
 

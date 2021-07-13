@@ -13,11 +13,13 @@ public class OperationResponse extends RepresentationModel<OperationResponse> {
     private String message;
     private long objectId;
     private Locale responseLocale;
+    private String token;
 
     public enum Operation {
         CREATION(ResponseMessageName.CREATION_OPERATION),
         DELETION(ResponseMessageName.DELETION_OPERATION),
-        UPDATE(ResponseMessageName.UPDATE_OPERATION);
+        UPDATE(ResponseMessageName.UPDATE_OPERATION),
+        AUTHORIZATION(ResponseMessageName.AUTHORIZATION_OPERATION);
 
         private final String nameKey;
 
@@ -39,6 +41,15 @@ public class OperationResponse extends RepresentationModel<OperationResponse> {
         this.objectId = objectId;
         this.message = ResourceBundle.getBundle(PropertyFileName.OPERATION_RESPONSE_MESSAGES,
                 locale).getString(messageKey) + StringUtils.SPACE + objectId;
+    }
+
+    public OperationResponse(Operation operation, String messageKey, long objectId, Locale locale, String token) {
+        this.responseLocale = locale;
+        this.operation = operation.getLocalizedOperationName(locale);
+        this.objectId = objectId;
+        this.message = ResourceBundle.getBundle(PropertyFileName.OPERATION_RESPONSE_MESSAGES,
+                locale).getString(messageKey) + StringUtils.SPACE + objectId;
+        this.token = token;
     }
 
     public String getMessage() {
@@ -63,5 +74,9 @@ public class OperationResponse extends RepresentationModel<OperationResponse> {
 
     public Locale getResponseLocale() {
         return responseLocale;
+    }
+
+    public String getToken() {
+        return token;
     }
 }

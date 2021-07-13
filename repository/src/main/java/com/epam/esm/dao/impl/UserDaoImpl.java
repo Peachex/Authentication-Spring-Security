@@ -1,5 +1,6 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.constant.entity.UserFieldName;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.User;
 import org.springframework.stereotype.Repository;
@@ -24,6 +25,15 @@ public class UserDaoImpl implements UserDao<User> {
     @Override
     public Optional<User> findById(long id) {
         return Optional.ofNullable(manager.find(User.class, id));
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<User> criteria = builder.createQuery(User.class);
+        Root<User> root = criteria.from(User.class);
+        criteria.select(root).where(builder.equal(root.get(UserFieldName.EMAIL), email));
+        return manager.createQuery(criteria).getResultList().stream().findFirst();
     }
 
     @Override

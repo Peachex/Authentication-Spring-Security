@@ -12,6 +12,8 @@ public class ErrorName {
     public static final String INVALID_ID = "error.invalidId";
     public static final String RESOURCE_NOT_FOUND = "error.resourceNotFound";
     public static final String INVALID_PAGINATION_DATA = "error.invalidPaginationData";
+    public static final String INVALID_AUTH_TOKEN = "error.invalidToken";
+    public static final String INVALID_USER_CREDENTIAL = "error.invalidUserCredential";
 
     private ErrorName() {
     }

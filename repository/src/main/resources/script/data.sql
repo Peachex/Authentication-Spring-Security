@@ -40,16 +40,21 @@ VALUES (4, 4, 2);
 INSERT INTO gift_certificates_tags (gift_certificate_tag_id, gift_certificate_id_fk, tag_id_fk)
 VALUES (5, 5, 3);
 
-INSERT INTO users (user_id, first_name, last_name, email)
-VALUES (1, 'Alice', 'Green', 'alice@gmail.com');
-INSERT INTO users (user_id, first_name, last_name, email)
-VALUES (2, 'Marting', 'Grace', 'marting@gmail.com');
-INSERT INTO users (user_id, first_name, last_name, email)
-VALUES (3, 'David', 'Sky', 'david@gmail.com');
-INSERT INTO users (user_id, first_name, last_name, email)
-VALUES (4, 'Bob', 'Space', 'spacebob123@gmail.com');
-INSERT INTO users (user_id, first_name, last_name, email)
-VALUES (5, 'Rick', 'Sun', 'always_sun@gmail.com');
+INSERT INTO users (user_id, first_name, last_name, email, password, role, is_active)
+VALUES (1, 'Alice', 'Green', 'alice@gmail.com', '$2y$12$XRUTT3VBVCzf64HS.fCcse0QhSiFZlfTb7E8XZ6iBzTjvPyhC8h.W',
+        'ADMIN', '1');
+INSERT INTO users (user_id, first_name, last_name, email, password, role, is_active)
+VALUES (2, 'Martin', 'Grace', 'martin@gmail.com', '$2y$12$XRUTT3VBVCzf64HS.fCcse0QhSiFZlfTb7E8XZ6iBzTjvPyhC8h.W',
+        'USER', '1');
+INSERT INTO users (user_id, first_name, last_name, email, password, role, is_active)
+VALUES (3, 'David', 'Sky', 'david@gmail.com', '$2y$12$XRUTT3VBVCzf64HS.fCcse0QhSiFZlfTb7E8XZ6iBzTjvPyhC8h.W', 'USER',
+        '1');
+INSERT INTO users (user_id, first_name, last_name, email, password, role, is_active)
+VALUES (4, 'Bob', 'Space', 'spacebob123@gmail.com', '$2y$12$XRUTT3VBVCzf64HS.fCcse0QhSiFZlfTb7E8XZ6iBzTjvPyhC8h.W',
+        'USER', '1');
+INSERT INTO users (user_id, first_name, last_name, email, password, role, is_active)
+VALUES (5, 'Rick', 'Sun', 'always_sun@gmail.com', '$2y$12$XRUTT3VBVCzf64HS.fCcse0QhSiFZlfTb7E8XZ6iBzTjvPyhC8h.W',
+        'USER', '1');
 
 INSERT INTO orders (order_id, price, timestamp, gift_certificate_id_fk, user_id_fk)
 VALUES (1, '0.99', '2012-10-10T11:10:11.111', 1, 1);
