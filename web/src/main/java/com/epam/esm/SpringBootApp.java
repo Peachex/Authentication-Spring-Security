@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringBootApp {
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(SpringBootApp.class);
-        application.setAdditionalProfiles(ProfileName.DEVELOPMENT);
+        application.setAdditionalProfiles(ProfileName.PRODUCTION);
         application.run(args);
     }
 }
