@@ -131,9 +131,12 @@ DROP TABLE IF EXISTS `users`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `user_id` bigint NOT NULL AUTO_INCREMENT,
+  `is_active` bit(1) NOT NULL,
+  `role` varchar(256) COLLATE utf8_bin NOT NULL,
   `first_name` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `last_name` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `email` varchar(320) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `password` varchar(256) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -156,4 +159,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-07-08 23:50:58
+-- Dump completed on 2021-07-14 12:28:53
