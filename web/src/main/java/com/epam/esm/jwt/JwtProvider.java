@@ -1,4 +1,4 @@
-package com.epam.esm.security;
+package com.epam.esm.jwt;
 
 import com.epam.esm.constant.HeaderName;
 import com.epam.esm.constant.entity.UserFieldName;
@@ -28,14 +28,14 @@ import java.util.Date;
 
 @Component
 @PropertySource("classpath:security/jwt.properties")
-public class JwtTokenProvider {
+public class JwtProvider {
     private final SecretKey secretKey = MacProvider.generateKey();
     private final UserService<User> service;
     @Value("${jwt.expirationInHours}")
     private int expirationInHours;
 
     @Autowired
-    public JwtTokenProvider(UserService<User> service) {
+    public JwtProvider(UserService<User> service) {
         this.service = service;
     }
 

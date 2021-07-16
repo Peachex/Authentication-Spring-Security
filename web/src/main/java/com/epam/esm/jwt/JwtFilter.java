@@ -1,4 +1,4 @@
-package com.epam.esm.security;
+package com.epam.esm.jwt;
 
 import com.epam.esm.constant.HeaderName;
 import com.epam.esm.exception.JwtAuthenticationException;
@@ -23,12 +23,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class JwtTokenFilter extends GenericFilterBean {
-    private final JwtTokenProvider provider;
+public class JwtFilter extends GenericFilterBean {
+    private final JwtProvider provider;
     private final JsonConverter jsonConverter;
 
     @Autowired
-    public JwtTokenFilter(JwtTokenProvider provider, JsonConverter jsonConverter) {
+    public JwtFilter(JwtProvider provider, JsonConverter jsonConverter) {
         this.provider = provider;
         this.jsonConverter = jsonConverter;
     }
