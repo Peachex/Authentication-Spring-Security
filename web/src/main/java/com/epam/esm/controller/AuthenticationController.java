@@ -9,7 +9,7 @@ import com.epam.esm.dto.UserCredential;
 import com.epam.esm.exception.InvalidUserCredentialException;
 import com.epam.esm.hateoas.Hateoas;
 import com.epam.esm.response.OperationResponse;
-import com.epam.esm.security.JwtTokenProvider;
+import com.epam.esm.jwt.JwtProvider;
 import com.epam.esm.service.UserService;
 import com.epam.esm.util.MessageLocale;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +29,16 @@ import javax.servlet.http.HttpServletRequest;
 public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final UserService<User> service;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
     private final Hateoas<OperationResponse> hateoas;
 
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager, UserService<User> service,
-                                    JwtTokenProvider jwtTokenProvider, @Qualifier("userOperationResponseHateoas")
+                                    JwtProvider jwtProvider, @Qualifier("userOperationResponseHateoas")
                                             Hateoas<OperationResponse> hateoas) {
         this.authenticationManager = authenticationManager;
         this.service = service;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtProvider = jwtProvider;
         this.hateoas = hateoas;
     }
 
@@ -47,7 +47,7 @@ public class AuthenticationController {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credential.getEmail(), credential.getPassword()));
             User user = service.findByEmail(credential.getEmail());
-            String token = jwtTokenProvider.createToken(credential.getEmail(), user.getRole().name());
+            String token = jwtProvider.createToken(credential.getEmail(), user.getRole().name());
             return new OperationResponse(OperationResponse.Operation.AUTHORIZATION,
                     ResponseMessageName.USER_LOGIN_OPERATION, user.getId(),
                     MessageLocale.defineLocale(request.getHeader(HeaderName.LOCALE)), token);
