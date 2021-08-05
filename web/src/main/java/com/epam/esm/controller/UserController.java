@@ -6,6 +6,7 @@ import com.epam.esm.dto.Order;
 import com.epam.esm.dto.Tag;
 import com.epam.esm.dto.User;
 import com.epam.esm.hateoas.Hateoas;
+import com.epam.esm.jwt.JwtProvider;
 import com.epam.esm.response.OperationResponse;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.TagService;
@@ -14,8 +15,8 @@ import com.epam.esm.util.MessageLocale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,11 +34,13 @@ public class UserController {
     private final Hateoas<Order> orderHateoas;
     private final Hateoas<Tag> tagHateoas;
     private final Hateoas<OperationResponse> responseHateoas;
+    private final JwtProvider jwtProvider;
 
     @Autowired
     public UserController(UserService<User> userService, OrderService<Order> orderService, TagService<Tag> tagService,
                           Hateoas<User> userHateoas, Hateoas<Order> orderHateoas, Hateoas<Tag> tagHateoas,
-                          @Qualifier("orderOperationResponseHateoas") Hateoas<OperationResponse> responseHateoas) {
+                          @Qualifier("orderOperationResponseHateoas") Hateoas<OperationResponse> responseHateoas,
+                          JwtProvider jwtProvider) {
         this.userService = userService;
         this.orderService = orderService;
         this.tagService = tagService;
@@ -45,6 +48,7 @@ public class UserController {
         this.orderHateoas = orderHateoas;
         this.tagHateoas = tagHateoas;
         this.responseHateoas = responseHateoas;
+        this.jwtProvider = jwtProvider;
     }
 
     @GetMapping("/{id}")
@@ -61,11 +65,12 @@ public class UserController {
         return users;
     }
 
-    @PatchMapping("/{userId}/orders/new/{certificateId}")
+    @PostMapping("/{userId}/orders/new/{certificateId}")
     public OperationResponse createOrder(HttpServletRequest request, @PathVariable String userId,
                                          @PathVariable String certificateId) {
         OperationResponse response = new OperationResponse(OperationResponse.Operation.CREATION,
-                ResponseMessageName.ORDER_CREATE_OPERATION, orderService.createOrder(userId, certificateId),
+                ResponseMessageName.ORDER_CREATE_OPERATION, orderService.createOrder(userId, certificateId,
+                jwtProvider.getUserName(request.getHeader(HeaderName.AUTHENTICATION_TOKEN))),
                 MessageLocale.defineLocale(request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);
         return response;

@@ -59,7 +59,7 @@ public class OrderServiceImplTest {
                         24, LocalDateTime.of(2020, 5, 5, 23, 42, 12,
                         112000000), null, new HashSet<>()));
 
-        long actual = orderService.createOrder("1", "1");
+        long actual = orderService.createOrder("1", "1", "alice@gmail.com");
         assertEquals(expected, actual);
     }
 
