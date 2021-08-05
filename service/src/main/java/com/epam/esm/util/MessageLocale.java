@@ -25,11 +25,17 @@ public enum MessageLocale {
     public static Locale defineLocale(String localeStr) {
         if (localeStr != null && !localeStr.isEmpty()) {
             for (MessageLocale locale : MessageLocale.values()) {
-                if (locale.country.equalsIgnoreCase(localeStr) || locale.language.equalsIgnoreCase(localeStr)) {
+                if (locale.country.equalsIgnoreCase(localeStr) || locale.language.equalsIgnoreCase(localeStr) ||
+                        localeStr.equalsIgnoreCase(locale.toString())) {
                     return new Locale(locale.language, locale.country);
                 }
             }
         }
         return new Locale(EN.language, EN.country);
+    }
+
+    @Override
+    public String toString() {
+        return language + "_" + country;
     }
 }

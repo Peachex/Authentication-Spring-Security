@@ -41,9 +41,12 @@ public class OrderServiceImpl implements OrderService<Order> {
     }
 
     @Override
-    public long createOrder(String userId, String certificateId) {
+    public long createOrder(String userId, String certificateId, String userEmailFromToken) {
         try {
             User user = userService.findById(userId);
+            if (!user.getEmail().equals(userEmailFromToken)) {
+                throw new InvalidFieldException(ErrorCode.ORDER, ErrorName.INVALID_ORDER_RECIPIENT, userId);
+            }
             GiftCertificate certificate = certificateService.findById(certificateId);
             Order order = createOrder(certificate);
             order.setUser(user);
