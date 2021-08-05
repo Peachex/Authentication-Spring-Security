@@ -1,0 +1,8 @@
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    implementation project(':repository')
+}
