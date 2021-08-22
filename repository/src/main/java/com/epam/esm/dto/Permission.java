@@ -8,6 +8,7 @@ public enum Permission {
     CERTIFICATES_WRITE("certificates:write"),
     CERTIFICATES_EDIT("certificates:edit"),
     CERTIFICATES_DELETE("certificates:delete"),
+    ALL_USERS_READ("all_users:read"),
     USERS_READ("users:read"),
     USERS_WRITE("users:write");
 

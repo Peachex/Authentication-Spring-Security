@@ -51,7 +51,7 @@ public class OrderServiceImplTest {
         long expected = 11;
         when(dao.insert(any())).thenReturn(expected);
 
-        when(userService.findById(anyString()))
+        when(userService.findById(anyString(), anyString()))
                 .thenReturn(new User(1, "Alice", "Green", "alice@gmail.com", "password", UserRole.ADMIN, true));
 
         when(certificateService.findById(anyString()))

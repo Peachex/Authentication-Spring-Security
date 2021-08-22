@@ -33,18 +33,18 @@ public class OrderServiceImpl implements OrderService<Order> {
     }
 
     @Override
-    public List<Order> findByUserId(int page, int elements, String id) {
+    public List<Order> findByUserId(int page, int elements, String id, String userName) {
         if (page < 1 || elements < 1) {
             throw new InvalidFieldException(ErrorCode.ORDER, ErrorName.INVALID_PAGINATION_DATA, page + ", " + elements);
         }
-        return dao.findByUserId(page, elements, userService.findById(id));
+        return dao.findByUserId(page, elements, userService.findById(id, userName));
     }
 
     @Override
-    public long createOrder(String userId, String certificateId, String userEmailFromToken) {
+    public long createOrder(String userId, String certificateId, String userName) {
         try {
-            User user = userService.findById(userId);
-            if (!user.getEmail().equals(userEmailFromToken)) {
+            User user = userService.findById(userId, userName);
+            if (!user.getEmail().equals(userName)) {
                 throw new InvalidFieldException(ErrorCode.ORDER, ErrorName.INVALID_ORDER_RECIPIENT, userId);
             }
             GiftCertificate certificate = certificateService.findById(certificateId);
@@ -58,8 +58,8 @@ public class OrderServiceImpl implements OrderService<Order> {
     }
 
     @Override
-    public Order findByUserIdAndOrderId(String userId, String orderId) {
-        return dao.findByUserIdAndOrderId(userService.findById(userId).getId(), findById(orderId).getId()).orElseThrow(
+    public Order findByUserIdAndOrderId(String userId, String orderId, String userName) {
+        return dao.findByUserIdAndOrderId(userService.findById(userId, userName).getId(), findById(orderId).getId()).orElseThrow(
                 () -> new ResourceNotFoundException(ErrorCode.ORDER, ErrorName.RESOURCE_NOT_FOUND, userId + "," +
                         StringUtils.SPACE + orderId));
     }

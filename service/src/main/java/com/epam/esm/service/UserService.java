@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.List;
 
 public interface UserService<T extends User> extends UserDetailsService {
-    T findById(String id);
+    T findById(String id, String userName);
 
     T findByEmail(String email);
 
