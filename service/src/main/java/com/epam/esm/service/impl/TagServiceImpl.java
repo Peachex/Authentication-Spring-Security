@@ -77,9 +77,9 @@ public class TagServiceImpl implements TagService<Tag> {
     }
 
     @Override
-    public Tag findMostUsedTagOfUserWithHighestCostOfAllOrders(String userId) {
-        return dao.findMostUsedTagOfUserWithHighestCostOfAllOrders(userService.findById(userId).getId()).orElseThrow(
-                () -> new ResourceNotFoundException(ErrorCode.TAG, ErrorName.RESOURCE_NOT_FOUND, userId));
+    public Tag findMostUsedTagOfUserWithHighestCostOfAllOrders(String userId, String userName) {
+        return dao.findMostUsedTagOfUserWithHighestCostOfAllOrders(userService.findById(userId, userName).getId())
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.TAG, ErrorName.RESOURCE_NOT_FOUND, userId));
     }
 
     @Override

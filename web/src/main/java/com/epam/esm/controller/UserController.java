@@ -53,7 +53,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User findUserById(@PathVariable String id) {
-        User user = userService.findById(id);
+        User user = userService.findById(id, jwtProvider.getUserNameFromSecurityContext());
         userHateoas.createHateoas(user);
         return user;
     }
@@ -78,21 +78,24 @@ public class UserController {
 
     @GetMapping("/{userId}/orders")
     public List<Order> findUserOrders(@PathVariable String userId, @RequestParam int page, @RequestParam int elements) {
-        List<Order> orders = orderService.findByUserId(page, elements, userId);
+        List<Order> orders = orderService.findByUserId(page, elements, userId,
+                jwtProvider.getUserNameFromSecurityContext());
         orders.forEach(orderHateoas::createHateoas);
         return orders;
     }
 
     @GetMapping("/{userId}/orders/{orderId}")
     public Order findUserOrder(@PathVariable String userId, @PathVariable String orderId) {
-        Order order = orderService.findByUserIdAndOrderId(userId, orderId);
+        Order order = orderService.findByUserIdAndOrderId(userId, orderId,
+                jwtProvider.getUserNameFromSecurityContext());
         orderHateoas.createHateoas(order);
         return order;
     }
 
     @GetMapping("/{userId}/orders/tags/popular")
     public Tag findMostUsedTagOfUserWithHighestCostOfAllOrders(@PathVariable String userId) {
-        Tag tag = tagService.findMostUsedTagOfUserWithHighestCostOfAllOrders(userId);
+        Tag tag = tagService.findMostUsedTagOfUserWithHighestCostOfAllOrders(userId,
+                jwtProvider.getUserNameFromSecurityContext());
         tagHateoas.createHateoas(tag);
         return tag;
     }
