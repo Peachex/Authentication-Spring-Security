@@ -5,7 +5,7 @@ import com.epam.esm.constant.ResponseMessageName;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Order;
 import com.epam.esm.hateoas.Hateoas;
-import com.epam.esm.response.OperationResponse;
+import com.epam.esm.response.EntityOperationResponse;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.util.MessageLocale;
@@ -30,12 +30,12 @@ public class GiftCertificateController {
     private final GiftCertificateService<GiftCertificate> certificateService;
     private final OrderService<Order> orderService;
     private final Hateoas<GiftCertificate> certificateHateoas;
-    private final Hateoas<OperationResponse> responseHateoas;
+    private final Hateoas<EntityOperationResponse> responseHateoas;
 
     @Autowired
     public GiftCertificateController(GiftCertificateService<GiftCertificate> certificateService, OrderService<Order>
             orderService, Hateoas<GiftCertificate> certificateHateoas, @Qualifier("certificateOperationResponseHateoas")
-                                             Hateoas<OperationResponse> responseHateoas) {
+                                             Hateoas<EntityOperationResponse> responseHateoas) {
         this.certificateService = certificateService;
         this.orderService = orderService;
         this.certificateHateoas = certificateHateoas;
@@ -63,9 +63,9 @@ public class GiftCertificateController {
     }
 
     @PostMapping("/new")
-    public OperationResponse createGiftCertificate(HttpServletRequest request,
-                                                   @RequestBody GiftCertificate giftCertificate) {
-        OperationResponse response = new OperationResponse(OperationResponse.Operation.CREATION,
+    public EntityOperationResponse createGiftCertificate(HttpServletRequest request,
+                                                         @RequestBody GiftCertificate giftCertificate) {
+        EntityOperationResponse response = new EntityOperationResponse(EntityOperationResponse.Operation.CREATION,
                 ResponseMessageName.CERTIFICATE_CREATE_OPERATION, certificateService.insert(giftCertificate),
                 MessageLocale.defineLocale(request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);
@@ -80,9 +80,9 @@ public class GiftCertificateController {
     }
 
     @DeleteMapping("/{id}")
-    public OperationResponse deleteGiftCertificate(HttpServletRequest request, @PathVariable String id) {
+    public EntityOperationResponse deleteGiftCertificate(HttpServletRequest request, @PathVariable String id) {
         certificateService.delete(id, orderService.findWithCurrentCertificate(id));
-        OperationResponse response = new OperationResponse(OperationResponse.Operation.DELETION,
+        EntityOperationResponse response = new EntityOperationResponse(EntityOperationResponse.Operation.DELETION,
                 ResponseMessageName.CERTIFICATE_DELETE_OPERATION, Long.parseLong(id), MessageLocale.defineLocale(
                 request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);
@@ -90,10 +90,10 @@ public class GiftCertificateController {
     }
 
     @PatchMapping("/{id}")
-    public OperationResponse updateGiftCertificate(HttpServletRequest request, @PathVariable String id,
-                                                   @RequestBody GiftCertificate giftCertificate) {
+    public EntityOperationResponse updateGiftCertificate(HttpServletRequest request, @PathVariable String id,
+                                                         @RequestBody GiftCertificate giftCertificate) {
         certificateService.update(id, giftCertificate);
-        OperationResponse response = new OperationResponse(OperationResponse.Operation.UPDATE,
+        EntityOperationResponse response = new EntityOperationResponse(EntityOperationResponse.Operation.UPDATE,
                 ResponseMessageName.CERTIFICATE_UPDATE_OPERATION, Long.parseLong(id), MessageLocale.defineLocale(
                 request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);

@@ -5,7 +5,7 @@ import com.epam.esm.constant.ResponseMessageName;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Tag;
 import com.epam.esm.hateoas.Hateoas;
-import com.epam.esm.response.OperationResponse;
+import com.epam.esm.response.EntityOperationResponse;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.util.MessageLocale;
@@ -30,11 +30,11 @@ public class TagController {
     private final TagService<Tag> tagService;
     private final GiftCertificateService<GiftCertificate> certificateService;
     private final Hateoas<Tag> tagHateoas;
-    private final Hateoas<OperationResponse> responseHateoas;
+    private final Hateoas<EntityOperationResponse> responseHateoas;
 
     @Autowired
     public TagController(TagService<Tag> tagService, Hateoas<Tag> tagHateoas, GiftCertificateService<GiftCertificate>
-            certificateService, @Qualifier("tagOperationResponseHateoas") Hateoas<OperationResponse> responseHateoas) {
+            certificateService, @Qualifier("tagOperationResponseHateoas") Hateoas<EntityOperationResponse> responseHateoas) {
         this.tagService = tagService;
         this.certificateService = certificateService;
         this.tagHateoas = tagHateoas;
@@ -56,12 +56,12 @@ public class TagController {
     }
 
     @DeleteMapping("/{id}")
-    public OperationResponse deleteTag(HttpServletRequest request, @PathVariable String id) {
+    public EntityOperationResponse deleteTag(HttpServletRequest request, @PathVariable String id) {
         Tag tag = tagService.findById(id);
         List<GiftCertificate> certificatesWithCurrentTag = certificateService.findCertificatesWithTagsByCriteria(
                 false, 0, 0, Collections.singletonList(tag.getName()), null, null, null, null);
         tagService.delete(id, !certificatesWithCurrentTag.isEmpty());
-        OperationResponse response = new OperationResponse(OperationResponse.Operation.DELETION,
+        EntityOperationResponse response = new EntityOperationResponse(EntityOperationResponse.Operation.DELETION,
                 ResponseMessageName.TAG_DELETE_OPERATION, Long.parseLong(id), MessageLocale.defineLocale(
                 request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);
@@ -69,8 +69,8 @@ public class TagController {
     }
 
     @PostMapping("/new")
-    public OperationResponse createTag(HttpServletRequest request, @RequestBody Tag tag) {
-        OperationResponse response = new OperationResponse(OperationResponse.Operation.CREATION,
+    public EntityOperationResponse createTag(HttpServletRequest request, @RequestBody Tag tag) {
+        EntityOperationResponse response = new EntityOperationResponse(EntityOperationResponse.Operation.CREATION,
                 ResponseMessageName.TAG_CREATE_OPERATION, tagService.insert(tag), MessageLocale.defineLocale(
                 request.getHeader(HeaderName.LOCALE)));
         responseHateoas.createHateoas(response);
