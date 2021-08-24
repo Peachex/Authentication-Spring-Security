@@ -8,7 +8,8 @@ import com.epam.esm.dto.User;
 import com.epam.esm.dto.UserCredential;
 import com.epam.esm.exception.InvalidUserCredentialException;
 import com.epam.esm.hateoas.Hateoas;
-import com.epam.esm.response.OperationResponse;
+import com.epam.esm.response.AuthenticationOperationResponse;
+import com.epam.esm.response.EntityOperationResponse;
 import com.epam.esm.jwt.JwtProvider;
 import com.epam.esm.service.UserService;
 import com.epam.esm.util.MessageLocale;
@@ -30,12 +31,12 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final UserService<User> service;
     private final JwtProvider jwtProvider;
-    private final Hateoas<OperationResponse> hateoas;
+    private final Hateoas<EntityOperationResponse> hateoas;
 
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager, UserService<User> service,
                                     JwtProvider jwtProvider, @Qualifier("userOperationResponseHateoas")
-                                            Hateoas<OperationResponse> hateoas) {
+                                            Hateoas<EntityOperationResponse> hateoas) {
         this.authenticationManager = authenticationManager;
         this.service = service;
         this.jwtProvider = jwtProvider;
@@ -43,12 +44,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public OperationResponse login(HttpServletRequest request, @RequestBody UserCredential credential) {
+    public AuthenticationOperationResponse login(HttpServletRequest request, @RequestBody UserCredential credential) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credential.getEmail(), credential.getPassword()));
             User user = service.findByEmail(credential.getEmail());
             String token = jwtProvider.createToken(credential.getEmail(), user.getRole().name());
-            return new OperationResponse(OperationResponse.Operation.AUTHORIZATION,
+            return new AuthenticationOperationResponse(EntityOperationResponse.Operation.AUTHORIZATION,
                     ResponseMessageName.USER_LOGIN_OPERATION, user.getId(),
                     MessageLocale.defineLocale(request.getHeader(HeaderName.LOCALE)), token);
         } catch (AuthenticationException e) {
@@ -58,8 +59,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public OperationResponse register(HttpServletRequest request, @RequestBody User user) {
-        OperationResponse response = new OperationResponse(OperationResponse.Operation.CREATION,
+    public EntityOperationResponse register(HttpServletRequest request, @RequestBody User user) {
+        EntityOperationResponse response = new EntityOperationResponse(EntityOperationResponse.Operation.CREATION,
                 ResponseMessageName.USER_REGISTER_OPERATION, service.insert(user), MessageLocale.defineLocale(
                 request.getHeader(HeaderName.LOCALE)));
         hateoas.createHateoas(response);
