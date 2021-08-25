@@ -31,7 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCertificate> { // FIXME: 25/08/2021 Methods are rather complex in the class
+public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCertificate> {
     private static final String ASC_SORT_ORDERING = "ASC";
     private static final String DESC_SORT_ORDERING = "DESC";
     private final GiftCertificateDao<GiftCertificate> dao;
@@ -52,11 +52,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     public long insert(GiftCertificate giftCertificate) {
         long id;
         if (certificateValidator.isGiftCertificateCreationFormValid(giftCertificate)) {
-            LocalDateTime currentTime = LocalDateTime.now();
-            giftCertificate.setCreateDate(currentTime);
-            giftCertificate.setLastUpdateDate(currentTime);
-            giftCertificate.setAvailable(true);
-
+            updateCertificateBeforeInsert(giftCertificate);
             if (CollectionUtils.isNotEmpty(giftCertificate.getTags())) {
                 Set<Tag> allTags = new HashSet<>(tagService.findAll());
                 Set<Tag> existingTags = SetUtils.intersection(allTags, giftCertificate.getTags());
@@ -123,9 +119,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                     List<Tag> newTags = (List<Tag>) CollectionUtils.removeAll(oldCertificate.getTags(), existingTags);
                     newTags.forEach(tagService::insert);
 
-                    Set<Tag> allCertificateTags = new HashSet<>(existingTags);
-                    allCertificateTags.addAll(newTags);
-                    oldCertificate.setTags(allCertificateTags);
+                    Set<Tag> certificateTags = new HashSet<>(existingTags);
+                    certificateTags.addAll(newTags);
+                    oldCertificate.setTags(certificateTags);
                 }
                 dao.update(oldCertificate);
             } else {
@@ -170,30 +166,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                     page + ", " + elements);
         }
         List<Criteria<GiftCertificate>> certificateCriteriaList = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(tagsNames) && tagsNames.stream().allMatch(tagValidator::isNameValid)) {
-            List<Tag> tags = new ArrayList<>();
-            tagsNames.forEach(t -> tags.add(tagService.findByName(t)));
-            certificateCriteriaList.add(new FullMatchSearchCertificateCriteria(tags));
-        }
-        if (certificateValidator.isNameValid(certificateName)) {
-            certificateCriteriaList.add(new PartMatchSearchCertificateCriteria(GiftCertificateFieldName.NAME,
-                    certificateName));
-        }
-        if (certificateValidator.isDescriptionValid(certificateDescription)) {
-            certificateCriteriaList.add(new PartMatchSearchCertificateCriteria(GiftCertificateFieldName.DESCRIPTION,
-                    certificateDescription));
-        }
-        if (sortByName != null && !sortByName.isEmpty()) {
-            String sortOrdering = sortByName.equalsIgnoreCase(ASC_SORT_ORDERING) ? ASC_SORT_ORDERING
-                    : DESC_SORT_ORDERING;
-            certificateCriteriaList.add(new FieldSortCertificateCriteria(GiftCertificateFieldName.NAME, sortOrdering));
-        }
-        if (sortByDate != null && !sortByDate.isEmpty()) {
-            String sortOrdering = sortByDate.equalsIgnoreCase(ASC_SORT_ORDERING) ? ASC_SORT_ORDERING
-                    : DESC_SORT_ORDERING;
-            certificateCriteriaList.add(new FieldSortCertificateCriteria(GiftCertificateFieldName.CREATE_DATE,
-                    sortOrdering));
-        }
+        addCriteriaForCertificateTagsNames(tagsNames, certificateCriteriaList);
+        addCriteriaForCertificateName(certificateName, certificateCriteriaList);
+        addCriteriaForCertificateDescription(certificateDescription, certificateCriteriaList);
+        addCriteriaForCertificateNameSorting(sortByName, certificateCriteriaList);
+        addCriteriaForCertificateDateSorting(sortByDate, certificateCriteriaList);
         return dao.findWithTags(isPaginationActive, page, elements, certificateCriteriaList);
     }
 
@@ -220,5 +197,51 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             result = true;
         }
         return result;
+    }
+
+    private void updateCertificateBeforeInsert(GiftCertificate certificate) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        certificate.setCreateDate(currentTime);
+        certificate.setLastUpdateDate(currentTime);
+        certificate.setAvailable(true);
+    }
+
+    private void addCriteriaForCertificateTagsNames(List<String> tagsNames, List<Criteria<GiftCertificate>> certificateCriteriaList) {
+        if (CollectionUtils.isNotEmpty(tagsNames) && tagsNames.stream().allMatch(tagValidator::isNameValid)) {
+            List<Tag> tags = new ArrayList<>();
+            tagsNames.forEach(t -> tags.add(tagService.findByName(t)));
+            certificateCriteriaList.add(new FullMatchSearchCertificateCriteria(tags));
+        }
+    }
+
+    private void addCriteriaForCertificateName(String certificateName, List<Criteria<GiftCertificate>> certificateCriteriaList) {
+        if (certificateValidator.isNameValid(certificateName)) {
+            certificateCriteriaList.add(new PartMatchSearchCertificateCriteria(GiftCertificateFieldName.NAME,
+                    certificateName));
+        }
+    }
+
+    private void addCriteriaForCertificateDescription(String certificateDescription, List<Criteria<GiftCertificate>> certificateCriteriaList) {
+        if (certificateValidator.isDescriptionValid(certificateDescription)) {
+            certificateCriteriaList.add(new PartMatchSearchCertificateCriteria(GiftCertificateFieldName.DESCRIPTION,
+                    certificateDescription));
+        }
+    }
+
+    private void addCriteriaForCertificateNameSorting(String sortByName, List<Criteria<GiftCertificate>> certificateCriteriaList) {
+        if (sortByName != null && !sortByName.isEmpty()) {
+            String sortOrdering = sortByName.equalsIgnoreCase(ASC_SORT_ORDERING) ? ASC_SORT_ORDERING
+                    : DESC_SORT_ORDERING;
+            certificateCriteriaList.add(new FieldSortCertificateCriteria(GiftCertificateFieldName.NAME, sortOrdering));
+        }
+    }
+
+    private void addCriteriaForCertificateDateSorting(String sortByDate, List<Criteria<GiftCertificate>> certificateCriteriaList) {
+        if (sortByDate != null && !sortByDate.isEmpty()) {
+            String sortOrdering = sortByDate.equalsIgnoreCase(ASC_SORT_ORDERING) ? ASC_SORT_ORDERING
+                    : DESC_SORT_ORDERING;
+            certificateCriteriaList.add(new FieldSortCertificateCriteria(GiftCertificateFieldName.CREATE_DATE,
+                    sortOrdering));
+        }
     }
 }
