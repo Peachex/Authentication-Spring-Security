@@ -57,7 +57,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             giftCertificate.setLastUpdateDate(currentTime);
             giftCertificate.setAvailable(true);
 
-            if (!CollectionUtils.isEmpty(giftCertificate.getTags())) {
+            if (CollectionUtils.isNotEmpty(giftCertificate.getTags())) {
                 Set<Tag> allTags = new HashSet<>(tagService.findAll());
                 Set<Tag> existingTags = SetUtils.intersection(allTags, giftCertificate.getTags());
                 if (!existingTags.isEmpty()) {
@@ -88,7 +88,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             GiftCertificate certificate = dao.findById(Long.parseLong(id)).orElseThrow(() ->
                     new ResourceNotFoundException(ErrorCode.GIFT_CERTIFICATE, ErrorName.RESOURCE_NOT_FOUND, id));
             if (CollectionUtils.isEmpty(orders)) {
-                if (!CollectionUtils.isEmpty(certificate.getTags())) {
+                if (CollectionUtils.isNotEmpty(certificate.getTags())) {
                     dao.disconnectAllTags(certificate);
                 }
                 dao.delete(certificate.getId());
@@ -114,7 +114,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
 
             if (updateCertificateFields(oldCertificate, newCertificate)) {
                 oldCertificate.setLastUpdateDate(LocalDateTime.now());
-                if (!CollectionUtils.isEmpty(oldCertificate.getTags())) {
+                if (CollectionUtils.isNotEmpty(oldCertificate.getTags())) {
                     List<Tag> existingTags = (List<Tag>) CollectionUtils.intersection(tagService.findAll(),
                             oldCertificate.getTags());
 
@@ -172,7 +172,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                     page + ", " + elements);
         }
         List<Criteria<GiftCertificate>> certificateCriteriaList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(tagsNames) && tagsNames.stream().allMatch(tagValidator::isNameValid)) {
+        if (CollectionUtils.isNotEmpty(tagsNames) && tagsNames.stream().allMatch(tagValidator::isNameValid)) {
             List<Tag> tags = new ArrayList<>();
             tagsNames.forEach(t -> tags.add(tagService.findByName(t)));
             certificateCriteriaList.add(new FullMatchSearchCertificateCriteria(tags));
