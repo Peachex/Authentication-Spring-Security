@@ -10,7 +10,7 @@ public interface GiftCertificateService<T extends GiftCertificate> {
 
     void delete(String id, List<Order> orders);
 
-    boolean update(String id, T giftCertificate);
+    void update(String id, T giftCertificate);
 
     T findById(String id);
 

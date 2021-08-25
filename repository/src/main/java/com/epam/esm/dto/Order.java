@@ -51,7 +51,6 @@ public class Order extends RepresentationModel<Order> {
     )
     private GiftCertificate giftCertificate;
 
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id_fk")
     private User user;

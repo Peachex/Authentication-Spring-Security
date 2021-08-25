@@ -19,7 +19,7 @@ public class GiftCertificateQueryCreator implements QueryCreator<GiftCertificate
             criteriaQuery, CriteriaBuilder builder, Root<GiftCertificate> root) {
         criteriaQuery.where(builder.isNotEmpty(root.get(GiftCertificateFieldName.TAGS)), builder.equal(
                 root.get(GiftCertificateFieldName.IS_AVAILABLE), true));
-        if (!CollectionUtils.isEmpty(criteriaList)) {
+        if (CollectionUtils.isNotEmpty(criteriaList)) {
             criteriaList.stream().filter(Objects::nonNull).forEach(c -> c.acceptCriteria(criteriaQuery, builder, root));
         }
     }
