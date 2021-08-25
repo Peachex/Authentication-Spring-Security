@@ -31,7 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCertificate> {
+public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCertificate> { // FIXME: 25/08/2021 Methods are rather complex in the class
     private static final String ASC_SORT_ORDERING = "ASC";
     private static final String DESC_SORT_ORDERING = "DESC";
     private final GiftCertificateDao<GiftCertificate> dao;
@@ -67,7 +67,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                 Set<Tag> newTags = new HashSet<>(CollectionUtils.removeAll(giftCertificate.getTags(), existingTags));
                 newTags.forEach(t -> t.setAvailable(true));
                 giftCertificate.setTags(newTags);
-
                 id = dao.insert(giftCertificate);
                 GiftCertificate certificateWithAllTags = dao.findById(id).get();
                 certificateWithAllTags.setTags(SetUtils.union(newTags, existingTags));
@@ -106,7 +105,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     }
 
     @Override
-    public boolean update(String id, GiftCertificate newCertificate) {
+    public void update(String id, GiftCertificate newCertificate) {
         try {
             GiftCertificate oldCertificate = dao.findById(Long.parseLong(id)).orElseThrow(() ->
                     new ResourceNotFoundException(ErrorCode.GIFT_CERTIFICATE,
@@ -136,7 +135,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         } catch (NumberFormatException e) {
             throw new InvalidFieldException(ErrorCode.GIFT_CERTIFICATE, ErrorName.INVALID_GIFT_CERTIFICATE_ID, id);
         }
-        return true;
     }
 
     @Override
