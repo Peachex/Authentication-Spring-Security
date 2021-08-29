@@ -16,7 +16,8 @@ public class EntityOperationResponse extends Response {
         CREATION(ResponseMessageName.CREATION_OPERATION),
         DELETION(ResponseMessageName.DELETION_OPERATION),
         UPDATE(ResponseMessageName.UPDATE_OPERATION),
-        AUTHORIZATION(ResponseMessageName.AUTHORIZATION_OPERATION);
+        AUTHORIZATION(ResponseMessageName.AUTHORIZATION_OPERATION),
+        LOGOUT(ResponseMessageName.LOGOUT_OPERATION);
 
         private final String nameKey;
 

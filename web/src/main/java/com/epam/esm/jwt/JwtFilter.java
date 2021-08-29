@@ -45,6 +45,7 @@ public class JwtFilter extends GenericFilterBean {
             }
             chain.doFilter(request, response);
         } catch (JwtAuthenticationException e) {
+            provider.removeToken(token);
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
