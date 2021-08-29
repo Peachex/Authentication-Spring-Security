@@ -58,6 +58,15 @@ public class AuthenticationController {
         }
     }
 
+    @PostMapping("/logout")
+    public EntityOperationResponse logout(HttpServletRequest request) {
+        String token = jwtProvider.resolveToken(request);
+        jwtProvider.removeToken(token);
+        return (new EntityOperationResponse(EntityOperationResponse.Operation.LOGOUT,
+                ResponseMessageName.LOGOUT_OPERATION, service.findByEmail(jwtProvider.getUserName(token)).getId(),
+                MessageLocale.defineLocale(request.getHeader(HeaderName.LOCALE))));
+    }
+
     @PostMapping("/register")
     public EntityOperationResponse register(HttpServletRequest request, @RequestBody User user) {
         EntityOperationResponse response = new EntityOperationResponse(EntityOperationResponse.Operation.CREATION,

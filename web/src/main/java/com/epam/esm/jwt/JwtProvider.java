@@ -26,10 +26,16 @@ import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 @Component
 @PropertySource("classpath:security/jwt.properties")
 public class JwtProvider {
+    static {
+        tokens = new CopyOnWriteArraySet<>();
+    }
+
+    private static final CopyOnWriteArraySet<String> tokens;
     private final SecretKey secretKey = MacProvider.generateKey();
     private final UserService<User> service;
     @Value("${jwt.expirationInHours}")
@@ -46,18 +52,20 @@ public class JwtProvider {
         Date now = new Date();
         Date validity = Date.from(now.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
                 .plusHours(expirationInHours).atZone(ZoneId.systemDefault()).toInstant());
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+        tokens.add(token);
+        return token;
     }
 
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return !claimsJws.getBody().getExpiration().before(new Date());
+            return (!claimsJws.getBody().getExpiration().before(new Date()) && tokens.contains(token));
         } catch (JwtException | IllegalArgumentException e) {
             throw new JwtAuthenticationException(ErrorCode.USER, ErrorName.INVALID_AUTH_TOKEN);
         }
@@ -78,5 +86,9 @@ public class JwtProvider {
 
     public String getUserNameFromSecurityContext() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    public boolean removeToken(String token) {
+        return tokens.remove(token);
     }
 }
