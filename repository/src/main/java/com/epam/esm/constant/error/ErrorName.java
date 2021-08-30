@@ -17,7 +17,7 @@ public class ErrorName {
     public static final String INVALID_USER_CREDENTIAL = "error.invalidUserCredential";
     public static final String INVALID_USER = "error.invalidUser";
     public static final String USER_EMAIL_IN_USE = "error.emailInUse";
-    public static final String INFORMATION_ACCESS_DENIED ="error.informationAccessDenied";
+    public static final String INFORMATION_ACCESS_DENIED = "error.informationAccessDenied";
 
     private ErrorName() {
     }

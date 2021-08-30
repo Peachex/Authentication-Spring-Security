@@ -21,8 +21,8 @@ public class DataSourceConfiguration {
     private static final String DATABASE_USERNAME = "spring.datasource.username";
     private static final String DATABASE_PASSWORD = "spring.datasource.password";
     private static final String DATABASE_POOL_MAX_SIZE = "spring.datasource.hikari.maximum-pool-size";
-    private static final String CREATE_DATABASE_SCRIPT = "classpath:script/schema.sql";
-    private static final String FILL_DATABASE_WITH_DATA_SCRIPT = "classpath:script/data.sql";
+    private static final String CREATE_DATABASE_SCRIPT = "classpath:scripts/schema.sql";
+    private static final String FILL_DATABASE_WITH_DATA_SCRIPT = "classpath:scripts/data.sql";
 
     private Environment environment;
 
@@ -30,7 +30,6 @@ public class DataSourceConfiguration {
     public void setEnvironment(Environment environment) {
         this.environment = environment;
     }
-
 
     @Profile(ProfileName.PRODUCTION)
     @Bean

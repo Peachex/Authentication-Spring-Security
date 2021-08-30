@@ -63,7 +63,7 @@ public class AuthenticationController {
         String token = jwtProvider.resolveToken(request);
         jwtProvider.removeToken(token);
         return (new EntityOperationResponse(EntityOperationResponse.Operation.LOGOUT,
-                ResponseMessageName.LOGOUT_OPERATION, service.findByEmail(jwtProvider.getUserName(token)).getId(),
+                ResponseMessageName.USER_LOGOUT_OPERATION, service.findByEmail(jwtProvider.getUserName(token)).getId(),
                 MessageLocale.defineLocale(request.getHeader(HeaderName.LOCALE))));
     }
 

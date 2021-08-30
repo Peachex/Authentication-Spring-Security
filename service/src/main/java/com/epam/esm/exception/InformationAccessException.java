@@ -5,7 +5,7 @@ import com.epam.esm.constant.PropertyFileName;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class InformationAccessException extends RuntimeException{
+public class InformationAccessException extends RuntimeException {
     private String errorCode;
     private String messageKey;
     private String detail;
