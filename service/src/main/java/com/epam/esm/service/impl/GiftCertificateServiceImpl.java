@@ -107,6 +107,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                     new ResourceNotFoundException(ErrorCode.GIFT_CERTIFICATE,
                             ErrorName.RESOURCE_NOT_FOUND, id));
 
+            if (!oldCertificate.isAvailable()) {
+                throw new ResourceNotFoundException(ErrorCode.GIFT_CERTIFICATE,
+                        ErrorName.RESOURCE_NOT_FOUND, id);
+            }
+
             if (updateCertificateFields(oldCertificate, newCertificate)) {
                 oldCertificate.setLastUpdateDate(LocalDateTime.now());
                 if (CollectionUtils.isNotEmpty(oldCertificate.getTags())) {

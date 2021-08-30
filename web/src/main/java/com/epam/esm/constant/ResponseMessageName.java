@@ -14,6 +14,7 @@ public class ResponseMessageName {
     public static final String USER_LOGIN_OPERATION = "operation.userLogin";
     public static final String USER_REGISTER_OPERATION = "operation.userRegister";
     public static final String LOGOUT_OPERATION = "operation.logout";
+    public static final String USER_LOGOUT_OPERATION = "operation.userLogout";
 
     private ResponseMessageName() {
     }

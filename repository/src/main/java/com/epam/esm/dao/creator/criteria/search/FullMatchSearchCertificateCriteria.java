@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class FullMatchSearchCertificateCriteria extends SearchCertificateCriteria {
-
     public FullMatchSearchCertificateCriteria(String columnName, String value) {
         super(columnName, value);
     }
