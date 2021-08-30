@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.anyLong;
@@ -36,7 +37,8 @@ public class UserServiceImplTest {
     public void findById() {
         User expected = new User(1, "Alice", "Green", "alice@gmail.com", "password", UserRole.ADMIN, true);
         when(dao.findById(anyLong())).thenReturn(Optional.of(expected));
-        User actual = service.findById("11");
+        when(dao.findByEmail(anyString())).thenReturn(Optional.of(expected));
+        User actual = service.findById("11", "alice@gmail.com");
         assertEquals(expected, actual);
     }
 

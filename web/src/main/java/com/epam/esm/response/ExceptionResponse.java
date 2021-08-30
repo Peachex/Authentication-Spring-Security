@@ -1,23 +1,11 @@
 package com.epam.esm.response;
 
-public class ExceptionResponse {
-    private String message;
+public class ExceptionResponse extends Response {
     private String errorCode;
 
-    public ExceptionResponse() {
-    }
-
     public ExceptionResponse(String message, String errorCode) {
-        this.message = message;
+        super(message);
         this.errorCode = errorCode;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public String getErrorCode() {

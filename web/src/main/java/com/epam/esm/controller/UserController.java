@@ -7,7 +7,7 @@ import com.epam.esm.dto.Tag;
 import com.epam.esm.dto.User;
 import com.epam.esm.hateoas.Hateoas;
 import com.epam.esm.jwt.JwtProvider;
-import com.epam.esm.response.OperationResponse;
+import com.epam.esm.response.EntityOperationResponse;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.UserService;
@@ -33,13 +33,13 @@ public class UserController {
     private final Hateoas<User> userHateoas;
     private final Hateoas<Order> orderHateoas;
     private final Hateoas<Tag> tagHateoas;
-    private final Hateoas<OperationResponse> responseHateoas;
+    private final Hateoas<EntityOperationResponse> responseHateoas;
     private final JwtProvider jwtProvider;
 
     @Autowired
     public UserController(UserService<User> userService, OrderService<Order> orderService, TagService<Tag> tagService,
                           Hateoas<User> userHateoas, Hateoas<Order> orderHateoas, Hateoas<Tag> tagHateoas,
-                          @Qualifier("orderOperationResponseHateoas") Hateoas<OperationResponse> responseHateoas,
+                          @Qualifier("orderOperationResponseHateoas") Hateoas<EntityOperationResponse> responseHateoas,
                           JwtProvider jwtProvider) {
         this.userService = userService;
         this.orderService = orderService;
@@ -53,7 +53,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User findUserById(@PathVariable String id) {
-        User user = userService.findById(id);
+        User user = userService.findById(id, jwtProvider.getUserNameFromSecurityContext());
         userHateoas.createHateoas(user);
         return user;
     }
@@ -66,9 +66,9 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/orders/new/{certificateId}")
-    public OperationResponse createOrder(HttpServletRequest request, @PathVariable String userId,
-                                         @PathVariable String certificateId) {
-        OperationResponse response = new OperationResponse(OperationResponse.Operation.CREATION,
+    public EntityOperationResponse createOrder(HttpServletRequest request, @PathVariable String userId,
+                                               @PathVariable String certificateId) {
+        EntityOperationResponse response = new EntityOperationResponse(EntityOperationResponse.Operation.CREATION,
                 ResponseMessageName.ORDER_CREATE_OPERATION, orderService.createOrder(userId, certificateId,
                 jwtProvider.getUserName(request.getHeader(HeaderName.AUTHENTICATION_TOKEN))),
                 MessageLocale.defineLocale(request.getHeader(HeaderName.LOCALE)));
@@ -78,21 +78,24 @@ public class UserController {
 
     @GetMapping("/{userId}/orders")
     public List<Order> findUserOrders(@PathVariable String userId, @RequestParam int page, @RequestParam int elements) {
-        List<Order> orders = orderService.findByUserId(page, elements, userId);
+        List<Order> orders = orderService.findByUserId(page, elements, userId,
+                jwtProvider.getUserNameFromSecurityContext());
         orders.forEach(orderHateoas::createHateoas);
         return orders;
     }
 
     @GetMapping("/{userId}/orders/{orderId}")
     public Order findUserOrder(@PathVariable String userId, @PathVariable String orderId) {
-        Order order = orderService.findByUserIdAndOrderId(userId, orderId);
+        Order order = orderService.findByUserIdAndOrderId(userId, orderId,
+                jwtProvider.getUserNameFromSecurityContext());
         orderHateoas.createHateoas(order);
         return order;
     }
 
     @GetMapping("/{userId}/orders/tags/popular")
     public Tag findMostUsedTagOfUserWithHighestCostOfAllOrders(@PathVariable String userId) {
-        Tag tag = tagService.findMostUsedTagOfUserWithHighestCostOfAllOrders(userId);
+        Tag tag = tagService.findMostUsedTagOfUserWithHighestCostOfAllOrders(userId,
+                jwtProvider.getUserNameFromSecurityContext());
         tagHateoas.createHateoas(tag);
         return tag;
     }

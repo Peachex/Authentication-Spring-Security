@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class FullMatchSearchCertificateCriteria extends SearchCertificateCriteria {
-
     public FullMatchSearchCertificateCriteria(String columnName, String value) {
         super(columnName, value);
     }
@@ -28,7 +27,7 @@ public class FullMatchSearchCertificateCriteria extends SearchCertificateCriteri
     public void acceptCriteria(CriteriaQuery<GiftCertificate> criteriaQuery, CriteriaBuilder builder,
                                Root<GiftCertificate> root) {
         List<Tag> searchedTags = getTags();
-        if (!CollectionUtils.isEmpty(searchedTags)) {
+        if (CollectionUtils.isNotEmpty(searchedTags)) {
             Expression<Collection<Tag>> tags = root.get(GiftCertificateFieldName.TAGS);
             List<Predicate> containsTags = new ArrayList<>();
             searchedTags.forEach(t -> containsTags.add(builder.isMember(t, tags)));

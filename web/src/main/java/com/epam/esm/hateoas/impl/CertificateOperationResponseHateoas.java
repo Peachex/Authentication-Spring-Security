@@ -2,7 +2,7 @@ package com.epam.esm.hateoas.impl;
 
 import com.epam.esm.controller.GiftCertificateController;
 import com.epam.esm.hateoas.Hateoas;
-import com.epam.esm.response.OperationResponse;
+import com.epam.esm.response.EntityOperationResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,16 +12,16 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class CertificateOperationResponseHateoas implements Hateoas<OperationResponse> {
-    private static final List<OperationResponse.Operation> operations = new ArrayList<>();
+public class CertificateOperationResponseHateoas implements Hateoas<EntityOperationResponse> {
+    private static final List<EntityOperationResponse.Operation> operations = new ArrayList<>();
 
     static {
-        operations.add(OperationResponse.Operation.CREATION);
-        operations.add(OperationResponse.Operation.UPDATE);
+        operations.add(EntityOperationResponse.Operation.CREATION);
+        operations.add(EntityOperationResponse.Operation.UPDATE);
     }
 
     @Override
-    public void createHateoas(OperationResponse response) {
+    public void createHateoas(EntityOperationResponse response) {
         if (operations.stream().anyMatch(o -> o.getLocalizedOperationName(response.getResponseLocale())
                 .equalsIgnoreCase(response.getOperation()))) {
             response.add(linkTo(methodOn(GiftCertificateController.class).findCertificateById(String.valueOf(response

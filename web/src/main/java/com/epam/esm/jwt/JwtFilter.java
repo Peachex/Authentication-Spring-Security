@@ -43,7 +43,9 @@ public class JwtFilter extends GenericFilterBean {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
+            chain.doFilter(request, response);
         } catch (JwtAuthenticationException e) {
+            provider.removeToken(token);
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -55,8 +57,6 @@ public class JwtFilter extends GenericFilterBean {
 
             ResponseEntity<ExceptionResponse> responseEntity = new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
             httpResponse.getOutputStream().println(jsonConverter.convert(responseEntity));
-            return;
         }
-        chain.doFilter(request, response);
     }
 }

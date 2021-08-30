@@ -5,6 +5,7 @@ import com.epam.esm.dao.UserDao;
 import com.epam.esm.constant.error.ErrorName;
 import com.epam.esm.dto.User;
 import com.epam.esm.dto.UserRole;
+import com.epam.esm.exception.InformationAccessException;
 import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ResourceDuplicateException;
 import com.epam.esm.exception.ResourceNotFoundException;
@@ -36,10 +37,16 @@ public class UserServiceImpl implements UserService<User> {
     }
 
     @Override
-    public User findById(String id) {
+    public User findById(String id, String userName) {
         try {
-            return dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException(
+            User currentUser = dao.findByEmail(userName).orElseThrow(() -> new ResourceNotFoundException(
                     ErrorCode.USER, ErrorName.RESOURCE_NOT_FOUND, id));
+            User user = dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException(
+                    ErrorCode.USER, ErrorName.RESOURCE_NOT_FOUND, id));
+            if (!user.getEmail().equals(userName) && !currentUser.getRole().equals(UserRole.ADMIN)) {
+                throw new InformationAccessException(ErrorCode.USER, ErrorName.INFORMATION_ACCESS_DENIED, id);
+            }
+            return user;
         } catch (NumberFormatException e) {
             throw new InvalidFieldException(ErrorCode.USER, ErrorName.INVALID_USER_ID, id);
         }

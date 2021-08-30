@@ -5,12 +5,12 @@ import com.epam.esm.constant.PropertyFileName;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class ResourceDuplicateException extends RuntimeException {
+public class InformationAccessException extends RuntimeException {
     private String errorCode;
     private String messageKey;
     private String detail;
 
-    public ResourceDuplicateException(String errorCode, String messageKey, String detail) {
+    public InformationAccessException(String errorCode, String messageKey, String detail) {
         this.errorCode = errorCode;
         this.messageKey = messageKey;
         this.detail = detail;
